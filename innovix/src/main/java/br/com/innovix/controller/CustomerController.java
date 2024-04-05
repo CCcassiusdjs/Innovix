@@ -25,7 +25,7 @@ public class CustomerController {
     @GetMapping
     public List<CustomerDTO> getAllCustomers() {
         return customerRepository.findAll().stream()
-                .map(this::convertToDto)
+                .map(CustomerDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 
@@ -33,29 +33,42 @@ public class CustomerController {
     public CustomerDTO getCustomerById(@PathVariable Long id) {
         CustomerEntity customer = customerRepository.findById(id)
                 .orElseThrow(() -> new CustomerNotFoundException("Cliente não encontrado com o ID: " + id));
-        return convertToDto(customer);
+        return CustomerDTO.fromEntity(customer);
     }
 
     @PostMapping
     public CustomerDTO addCustomer(@RequestBody CustomerDTO customerDTO) {
-        CustomerEntity customer = convertToEntity(customerDTO);
+        customerDTO.validateForCreationOrUpdate();
+        CustomerEntity customer = new CustomerEntity();
+        // Preencher a entidade com base nos dados do DTO
+        customer.setName(customerDTO.name());
+        customer.setStreet(customerDTO.street());
+        customer.setZipCode(customerDTO.zipCode());
+
         CustomerEntity savedCustomer = customerRepository.save(customer);
-        return convertToDto(savedCustomer);
+        return CustomerDTO.fromEntity(savedCustomer);
     }
 
-    // Métodos PUT e DELETE, conforme necessário
+    @PutMapping("/{id}")
+    public CustomerDTO updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO customerDTO) {
+        CustomerEntity existingCustomer = customerRepository.findById(id)
+                .orElseThrow(() -> new CustomerNotFoundException("Cliente não encontrado com o ID: " + id));
 
-    private CustomerDTO convertToDto(CustomerEntity customerEntity) {
-        CustomerDTO customerDTO = CustomerDTO.createCustomerDTO();
-        customerDTO.setCodCustomer((long) customerEntity.getCodCustomer());
-        customerDTO.setName(customerEntity.getName());
-        customerDTO.setStreet(customerEntity.getStreet());
-        customerDTO.setZipCode(customerEntity.getZipCode());
-        return customerDTO;
+        customerDTO.validateForCreationOrUpdate();
+        // Atualizar a entidade existente
+        existingCustomer.setName(customerDTO.name());
+        existingCustomer.setStreet(customerDTO.street());
+        existingCustomer.setZipCode(customerDTO.zipCode());
+
+        CustomerEntity updatedCustomer = customerRepository.save(existingCustomer);
+        return CustomerDTO.fromEntity(updatedCustomer);
     }
 
-    private CustomerEntity convertToEntity(CustomerDTO customerDTO) {
-        // Set fields from DTO to Entity
-        return new CustomerEntity();
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteCustomer(@PathVariable Long id) {
+        CustomerEntity customer = customerRepository.findById(id)
+                .orElseThrow(() -> new CustomerNotFoundException("Cliente não encontrado com o ID: " + id));
+        customerRepository.delete(customer);
+        return ResponseEntity.ok().build();
     }
 }

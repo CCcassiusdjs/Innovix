@@ -25,7 +25,7 @@ public class EmployeeController {
     @GetMapping
     public List<EmployeeDTO> getAllEmployees() {
         return employeeRepository.findAll().stream()
-                .map(this::convertToDto)
+                .map(EmployeeDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 
@@ -33,29 +33,41 @@ public class EmployeeController {
     public EmployeeDTO getEmployeeById(@PathVariable Long id) {
         EmployeeEntity employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new EmployeeNotFoundException("Funcionário não encontrado com o ID: " + id));
-        return convertToDto(employee);
+        return EmployeeDTO.fromEntity(employee);
     }
 
     @PostMapping
     public EmployeeDTO addEmployee(@RequestBody EmployeeDTO employeeDTO) {
-        EmployeeEntity employee = convertToEntity(employeeDTO);
+        // Validação pode ser adicionada aqui, se necessário
+        EmployeeEntity employee = new EmployeeEntity();
+        // Preencher a entidade com base nos dados do DTO
+        employee.setName(employeeDTO.name());
+        employee.setStreet(employeeDTO.street());
+        employee.setZipCode(employeeDTO.zipCode());
+
         EmployeeEntity savedEmployee = employeeRepository.save(employee);
-        return convertToDto(savedEmployee);
+        return EmployeeDTO.fromEntity(savedEmployee);
     }
 
-    // Métodos PUT e DELETE conforme necessário
+    @PutMapping("/{id}")
+    public EmployeeDTO updateEmployee(@PathVariable Long id, @RequestBody EmployeeDTO employeeDTO) {
+        EmployeeEntity existingEmployee = employeeRepository.findById(id)
+                .orElseThrow(() -> new EmployeeNotFoundException("Funcionário não encontrado com o ID: " + id));
 
-    private EmployeeDTO convertToDto(EmployeeEntity employeeEntity) {
-        EmployeeDTO employeeDTO = EmployeeDTO.createEmployeeDTO();
-        employeeDTO.setCodEmployee((long) employeeEntity.getCodEmployee());
-        employeeDTO.setName(employeeEntity.getName());
-        employeeDTO.setStreet(employeeEntity.getStreet());
-        employeeDTO.setZipCode(employeeEntity.getZipCode());
-        return employeeDTO;
+        // Atualizar a entidade existente
+        existingEmployee.setName(employeeDTO.name());
+        existingEmployee.setStreet(employeeDTO.street());
+        existingEmployee.setZipCode(employeeDTO.zipCode());
+
+        EmployeeEntity updatedEmployee = employeeRepository.save(existingEmployee);
+        return EmployeeDTO.fromEntity(updatedEmployee);
     }
 
-    private EmployeeEntity convertToEntity(EmployeeDTO employeeDTO) {
-        // Set fields from DTO to Entity
-        return new EmployeeEntity();
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteEmployee(@PathVariable Long id) {
+        EmployeeEntity employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new EmployeeNotFoundException("Funcionário não encontrado com o ID: " + id));
+        employeeRepository.delete(employee);
+        return ResponseEntity.ok().build();
     }
 }

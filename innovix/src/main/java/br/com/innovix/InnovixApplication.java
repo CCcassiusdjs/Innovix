@@ -7,7 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class InnovixApplication {
 
 	public static void main(String[] args) {
+		// Inicializa a aplicação Spring
 		SpringApplication.run(InnovixApplication.class, args);
-	}
 
+
+	}
 }

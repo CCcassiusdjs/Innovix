@@ -1,69 +1,40 @@
 package br.com.innovix.dto;
 
-public class OrderDTO {
-    private Long codOrder;
-    private String companyName;
-    private String sender;
-    private String recipient;
-    private Double shipCost;
-    private String state;
-    private Long codCustomer;
+import br.com.innovix.entity.OrderEntity;
+import br.com.innovix.entity.CustomerEntity;
 
-    // Getters e Setters
-
-    public Long getCodCustomer() {
-        return codCustomer;
+public record OrderDTO(
+        Long codOrder,
+        String companyName,
+        String sender,
+        String recipient,
+        Double shipCost,
+        String state,
+        Long codCustomer
+) {
+    public static OrderDTO fromEntity(OrderEntity entity) {
+        return new OrderDTO(
+                (long) entity.getCodOrder(),
+                entity.getCompanyName(),
+                entity.getSender(),
+                entity.getRecipient(),
+                entity.getShipCost(),
+                entity.getState(),
+                (long) entity.getCustomerByCodCustomer().getCodCustomer()
+        );
     }
 
-    public void setCodCustomer(Long codCustomer) {
-        this.codCustomer = codCustomer;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public Double getShipCost() {
-        return shipCost;
-    }
-
-    public void setShipCost(Double shipCost) {
-        this.shipCost = shipCost;
-    }
-
-    public String getRecipient() {
-        return recipient;
-    }
-
-    public void setRecipient(String recipient) {
-        this.recipient = recipient;
-    }
-
-    public String getSender() {
-        return sender;
-    }
-
-    public void setSender(String sender) {
-        this.sender = sender;
-    }
-
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
-
-    public Long getCodOrder() {
-        return codOrder;
-    }
-
-    public void setCodOrder(Long codOrder) {
-        this.codOrder = codOrder;
+    public OrderEntity toEntity() {
+        OrderEntity entity = new OrderEntity();
+        entity.setCodOrder(Math.toIntExact(this.codOrder));
+        entity.setCompanyName(this.companyName);
+        entity.setSender(this.sender);
+        entity.setRecipient(this.recipient);
+        entity.setShipCost(this.shipCost);
+        entity.setState(this.state);
+        CustomerEntity customerEntity = new CustomerEntity();
+        customerEntity.setCodCustomer(Math.toIntExact(this.codCustomer));
+        entity.setCustomerByCodCustomer(customerEntity);
+        return entity;
     }
 }

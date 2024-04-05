@@ -20,6 +20,12 @@ public class SaleEntity {
     @Basic
     @Column(name = "date", nullable = false)
     private Date date;
+
+    @Column(name = "start_date", nullable = false)
+    private Date startDate;
+
+    @Column(name = "end_date", nullable = false)
+    private Date endDate;
     @Basic
     @Column(name = "type", nullable = false, length = 255)
     private String type;

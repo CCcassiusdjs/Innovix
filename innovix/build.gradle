@@ -1,14 +1,15 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.2.4'
-	id 'io.spring.dependency-management' version '1.1.4'
+	id 'org.springframework.boot' version '3.2.4' // Plugin do Spring Boot
+	id 'io.spring.dependency-management' version '1.1.4' // Plugin para gerenciamento de dependências do Spring
 }
 
-group = 'br.com.innovix'
-version = '0.0.1-SNAPSHOT'
+
+group = 'br.com.innovix' // Grupo do projeto
+version = '0.0.1-SNAPSHOT' // Versão do projeto
 
 java {
-	sourceCompatibility = '17'
+	sourceCompatibility = '22' // Versão do Java
 }
 
 configurations {
@@ -18,25 +19,45 @@ configurations {
 }
 
 repositories {
-	mavenCentral()
+	mavenCentral() // Repositório Maven Central para dependências
 }
 
 dependencies {
+	// Dependências do Spring Boot
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
-	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'org.postgresql:postgresql'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
-	implementation 'org.postgresql:postgresql'
-	testImplementation 'org.postgresql:postgresql'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.modulith:spring-modulith-starter-core'
+	implementation 'org.springframework.modulith:spring-modulith-starter-jdbc'
+	implementation 'org.springframework.modulith:spring-modulith-starter-jpa'
+	testImplementation 'org.springframework.modulith:spring-modulith-starter-test'
 
+
+	// Lombok
+	compileOnly 'org.projectlombok:lombok:1.18.22'
+	annotationProcessor 'org.projectlombok:lombok:1.18.22'
+
+	// Dependências para teste
+	testImplementation 'org.testcontainers:junit-jupiter'
+	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+	testImplementation 'org.testcontainers:postgresql'
+	testImplementation 'org.springframework.modulith:spring-modulith-starter-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.postgresql:postgresql'
+
+	// Dependências de tempo de execução
+	runtimeOnly 'org.postgresql:postgresql'
+	runtimeOnly 'org.springframework.boot:spring-boot-docker-compose'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools' // Para desenvolvimento
 }
 
-
 test {
-	useJUnitPlatform()
+	useJUnitPlatform() // Usar a plataforma JUnit para testes
+}
+
+dependencyManagement {
+	imports {
+	}
 }

@@ -1,4 +1,12 @@
 package br.com.innovix.exception;
 
-public class InventoryException {
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(value = HttpStatus.NOT_FOUND)
+public class InventoryException extends RuntimeException {
+
+    public InventoryException(String message) {
+        super(message);
+    }
 }
