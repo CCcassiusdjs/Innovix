@@ -1,0 +1,24 @@
+# Use uma imagem base do Maven
+FROM gradle:jdk17 as builder
+
+COPY . /home/gradle/src
+
+# Defina o diretório de trabalho como o diretório do projeto
+WORKDIR /home/gradle/src
+
+# Compila o aplicativo
+RUN gradle build --no-daemon
+
+# Use uma imagem menor do OpenJDK para a execução
+FROM openjdk:17
+
+# Copie o JAR compilado do estágio de construção para o diretório /app no contêiner
+
+COPY --from=builder /home/gradle/src/build/libs/innovix-1.0.jar  /app/innovix-1.0.jar
+
+
+# Define o diretório de trabalho como /app
+WORKDIR /app
+
+# Comando para executar o JAR
+CMD ["java", "-jar", "innovix-1.0.jar"]

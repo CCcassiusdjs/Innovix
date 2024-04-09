@@ -13,7 +13,7 @@ java {
 
 jar {
     // Especifica o nome do arquivo JAR
-    archiveName = 'innovix.jar'
+    archiveBaseName = 'innovix.jar'
     
     // Especifica o manifest do JAR
     manifest {
@@ -34,7 +34,6 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.postgresql:postgresql'
@@ -48,7 +47,3 @@ dependencies {
 
 }
 
-
-test {
-	useJUnitPlatform()
-}
