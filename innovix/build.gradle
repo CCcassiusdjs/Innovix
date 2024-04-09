@@ -1,15 +1,24 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.2.4' // Plugin do Spring Boot
-	id 'io.spring.dependency-management' version '1.1.4' // Plugin para gerenciamento de dependências do Spring
+	id 'org.springframework.boot' version '3.2.4'
+	id 'io.spring.dependency-management' version '1.1.4'
 }
 
-
-group = 'br.com.innovix' // Grupo do projeto
-version = '0.0.1-SNAPSHOT' // Versão do projeto
+group = 'br.com.innovix'
+version = '1.0'
 
 java {
-	sourceCompatibility = '22' // Versão do Java
+	sourceCompatibility = '17'
+}
+
+jar {
+    // Especifica o nome do arquivo JAR
+    archiveName = 'innovix.jar'
+    
+    // Especifica o manifest do JAR
+    manifest {
+        attributes 'Main-Class': 'br.com.innovix.main' // Substitua pelo caminho da sua classe principal
+    }
 }
 
 configurations {
@@ -18,46 +27,28 @@ configurations {
 	}
 }
 
+
+
 repositories {
-	mavenCentral() // Repositório Maven Central para dependências
+	mavenCentral()
 }
 
 dependencies {
-	// Dependências do Spring Boot
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.modulith:spring-modulith-starter-core'
-	implementation 'org.springframework.modulith:spring-modulith-starter-jdbc'
-	implementation 'org.springframework.modulith:spring-modulith-starter-jpa'
-	testImplementation 'org.springframework.modulith:spring-modulith-starter-test'
-
-
-	// Lombok
-	compileOnly 'org.projectlombok:lombok:1.18.22'
-	annotationProcessor 'org.projectlombok:lombok:1.18.22'
-
-	// Dependências para teste
-	testImplementation 'org.testcontainers:junit-jupiter'
-	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
-	testImplementation 'org.testcontainers:postgresql'
-	testImplementation 'org.springframework.modulith:spring-modulith-starter-test'
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'org.postgresql:postgresql'
+	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	implementation 'org.postgresql:postgresql'
 	testImplementation 'org.postgresql:postgresql'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
 
-	// Dependências de tempo de execução
-	runtimeOnly 'org.postgresql:postgresql'
-	runtimeOnly 'org.springframework.boot:spring-boot-docker-compose'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools' // Para desenvolvimento
 }
+
 
 test {
-	useJUnitPlatform() // Usar a plataforma JUnit para testes
-}
-
-dependencyManagement {
-	imports {
-	}
+	useJUnitPlatform()
 }
