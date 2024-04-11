@@ -1,9 +1,14 @@
 services:
 
   db:
-      image: postgres
+      image: postgres:latest
+      container_name: postgres_db_tste
+      ports:
+        - 5432:5432
       environment:
-       POSTGRES_PASSWORD: 8@Uw9#kZm3$pA*7
+       POSTGRES_DB: innovix
+       POSTGRES_PASSWORD: root
+
 
   app:
     build:
@@ -14,9 +19,9 @@ services:
     ports:
       - 8080:8080
     environment:
-      SPRING_DATASOURCE_URL: "jdbc:postgresql://localhost:5432/innovix-db?createDatabaseIfNotExist=true"
-      SPRING_DATASOURCE_USERNAME: "root"
-      SPRING_DATASOURCE_PASSWORD: "8@Uw9#kZm3$pA*7!"
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://db:5432/innovix"
+      SPRING_DATASOURCE_USERNAME: "postgres"
+      SPRING_DATASOURCE_PASSWORD: "root"
       SPRING_JPA_SHOW_SQL: "true"
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
       SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
