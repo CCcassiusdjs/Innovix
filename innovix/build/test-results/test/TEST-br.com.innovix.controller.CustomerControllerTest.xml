@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="br.com.innovix.controller.CustomerControllerTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2024-04-14T05:33:39" hostname="CASSIO_LAPTOP" time="1.558">
+  <properties/>
+  <testcase name="getCustomerById()" classname="br.com.innovix.controller.CustomerControllerTest" time="1.462"/>
+  <testcase name="deleteCustomer()" classname="br.com.innovix.controller.CustomerControllerTest" time="0.042"/>
+  <testcase name="getCustomerById_NotFound()" classname="br.com.innovix.controller.CustomerControllerTest" time="0.01"/>
+  <testcase name="addCustomer()" classname="br.com.innovix.controller.CustomerControllerTest" time="0.009"/>
+  <testcase name="getAllCustomers()" classname="br.com.innovix.controller.CustomerControllerTest" time="0.008"/>
+  <testcase name="updateCustomer()" classname="br.com.innovix.controller.CustomerControllerTest" time="0.01"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
