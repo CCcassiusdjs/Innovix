@@ -1,7 +1,7 @@
 services:
   db:
       image: postgres:latest
-      container_name: postgres_db_tste
+      container_name: postgres_db
       ports:
         - 5432:5432
       environment:
@@ -9,6 +9,7 @@ services:
        POSTGRES_PASSWORD: root
 
   app:
+    container_name: app
     build:
       context: .
       dockerfile: Dockerfile
