@@ -14,7 +14,7 @@ public class TaxesEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "cod_tax", nullable = false)
-    private int codTax;
+    private Long codTax;
 
     @Basic
     @Column(name = "state", nullable = false, length = 50)
@@ -31,7 +31,7 @@ public class TaxesEntity {
     // Mantenha apenas este mapeamento e remova o @Column para codOrder
     @ManyToOne
     @JoinColumn(name = "cod_order", referencedColumnName = "cod_order", nullable = false)
-    private OrderEntity orderByCodOrder;
+    private OrdersEntities.OrderEntity orderByCodOrder;
 
     @Override
     public boolean equals(Object o) {

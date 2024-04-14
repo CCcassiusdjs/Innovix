@@ -1,7 +1,7 @@
 package br.com.innovix.dto;
 
+import br.com.innovix.entity.OrdersEntities;
 import br.com.innovix.entity.TaxesEntity;
-import br.com.innovix.entity.OrderEntity;
 
 public record TaxesDTO(
         Long codTax,
@@ -22,12 +22,12 @@ public record TaxesDTO(
 
     public TaxesEntity toEntity() {
         TaxesEntity entity = new TaxesEntity();
-        entity.setCodTax(Math.toIntExact(this.codTax));
+        entity.setCodTax(this.codTax);
         entity.setState(this.state);
         entity.setValue(this.value);
         entity.setDescription(this.description);
-        OrderEntity orderEntity = new OrderEntity();
-        orderEntity.setCodOrder(Math.toIntExact(this.codOrder));
+        OrdersEntities.OrderEntity orderEntity = new OrdersEntities.OrderEntity();
+        orderEntity.setCodOrder(this.codOrder);
         entity.setOrderByCodOrder(orderEntity);
         return entity;
     }
