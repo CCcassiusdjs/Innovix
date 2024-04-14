@@ -1,59 +1,26 @@
-services:  # Defines the services that make up the application.
+services:
+  db:
+      image: postgres:latest
+      container_name: postgres_db
+      ports:
+        - 5432:5432
+      environment:
+       POSTGRES_DB: innovix
+       POSTGRES_PASSWORD: root
 
-  db:  # Defines a service named "db".
-    image: postgres:latest  # Specifies the Docker image to use for the service, using the latest version of PostgreSQL.
-    container_name: postgres_db  # Sets a custom name for the container.
-    ports:
-      - 5432:5432  # Maps port 5432 on the host to port 5432 on the container, making the database accessible outside the container.
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}  # Environment variable for PostgreSQL to specify the database name, taken from the .env file.
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}  # Environment variable to set the database user's password, taken from the .env file.
-    volumes:
-      - db-data:/var/lib/postgresql/data  # Mounts a volume for persistent storage of PostgreSQL data.
-    networks:
-      - backend  # Connects the PostgreSQL service to a custom network named "backend".
-    logging:
-      options:
-        max-size: "10m"  # Limits the log size to 10 megabytes.
-        max-file: "3"  # Limits the number of log files to 3.
-    healthcheck:  # Configures health checks to verify the container's health.
-      test: ["CMD", "pg_isready", "-U", "postgres"]  # Health check command to ensure PostgreSQL is ready to accept connections.
-      interval: 30s  # Interval between health checks.
-      timeout: 10s  # Timeout for each health check.
-      retries: 5  # Number of retries before considering the service unhealthy.
-
-  app:  # Defines another service named "app".
+  app:
+    container_name: app
     build:
-      context: .  # Specifies the build context (current directory containing Dockerfile and source code).
-      dockerfile: Dockerfile  # Indicates the Dockerfile to use for building the image.
+      context: .
+      dockerfile: Dockerfile
     depends_on:
-      - db  # Ensures the app service starts only after the db service has started.
+      - db
     ports:
-      - "8080:8080"  # Maps port 8080 on the host to port 8080 in the container.
+      - 8080:8080
     environment:
-      SPRING_DATASOURCE_URL: "jdbc:postgresql://db:5432/innovix"  # JDBC connection URL for the Spring application to connect to PostgreSQL.
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}  # Username for the JDBC connection, taken from the .env file.
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}  # Password for the JDBC connection, taken from the .env file.
-      SPRING_JPA_SHOW_SQL: "false"  # Disables SQL logging by Spring JPA to reduce verbosity.
-      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver  # Specifies the JDBC driver class.
-      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect  # Specifies the Hibernate dialect for PostgreSQL.
-      SERVER_SERVLET_CONTEXT_PATH: ${SERVER_SERVLET_CONTEXT_PATH}  # Sets the context path for the Spring Boot application.
-    networks:
-      - backend  # Connects the app service to the "backend" network.
-    logging:
-      driver: json-file  # Uses JSON format for logging.
-      options:
-        max-size: "10m"  # Limits log file size to 10 megabytes.
-        max-file: "3"  # Limits the number of log files to 3.
-    healthcheck:  # Configures health checks for the app service.
-      test: ["CMD", "curl", "-f", "http://localhost:8080${SERVER_SERVLET_CONTEXT_PATH}/actuator/health"]  # Command to check health status via Spring Boot actuator.
-      interval: 30s  # Interval between health checks.
-      timeout: 10s  # Timeout for each health check.
-      retries: 3  # Number of retries before considering the service unhealthy.
-
-volumes:
-  db-data:  # Defines a named volume to store persistent data for the PostgreSQL database.
-
-networks:
-  backend:  # Creates a custom network using the default bridge driver, improving isolation between containers.
-    driver: bridge
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://db:5432/innovix"
+      SPRING_DATASOURCE_USERNAME: "postgres"
+      SPRING_DATASOURCE_PASSWORD: "root"
+      SPRING_JPA_SHOW_SQL: "true"
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
