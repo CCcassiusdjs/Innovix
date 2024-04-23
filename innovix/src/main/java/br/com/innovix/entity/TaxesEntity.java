@@ -1,18 +1,21 @@
 package br.com.innovix.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Objects;
 
-@Setter
-@Getter
+@Data
 @Entity
 @Table(name = "taxes", schema = "public", catalog = "Innovix")
 public class TaxesEntity {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
+
+   @Id
+   @GeneratedValue
+   private Long id;
+
     @Column(name = "state", nullable = false, length = 50)
     private String state;
 

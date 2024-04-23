@@ -8,6 +8,7 @@ public record TaxesDTO(
         Double value,
         String description
 ) {
+
     public static TaxesDTO fromEntity(TaxesEntity entity) {
         return new TaxesDTO(
                 entity.getState(),
