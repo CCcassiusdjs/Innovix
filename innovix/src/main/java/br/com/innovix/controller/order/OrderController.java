@@ -2,6 +2,8 @@ package br.com.innovix.controller.order;
 
 import br.com.innovix.domain.order.order.OrderDTO;
 import br.com.innovix.domain.order.order.OrderService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -13,12 +15,8 @@ import java.util.List;
 @RequestMapping("/orders")
 public class OrderController {
 
-    private final OrderService orderService;
-
     @Autowired
-    public OrderController(OrderService orderService) {
-        this.orderService = orderService;
-    }
+    private  OrderService orderService;
 
     @GetMapping
     public ResponseEntity<List<OrderDTO>> getAllOrders() {
@@ -27,25 +25,25 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OrderDTO> getOrderById(@PathVariable Long id) {
+    public ResponseEntity<OrderDTO> getOrderById(@PathVariable @NotBlank Long id) {
         OrderDTO order = orderService.findOrderById(id);
         return ResponseEntity.ok(order);
     }
 
     @PostMapping
-    public ResponseEntity<OrderDTO> addOrder(@Validated @RequestBody OrderDTO orderDTO) {
+    public ResponseEntity<OrderDTO> addOrder(@Valid @RequestBody OrderDTO orderDTO) {
         OrderDTO newOrder = orderService.addOrder(orderDTO);
         return ResponseEntity.ok(newOrder);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<OrderDTO> updateOrder(@PathVariable Long id, @Validated @RequestBody OrderDTO orderDTO) {
+    public ResponseEntity<OrderDTO> updateOrder(@PathVariable @NotBlank Long id, @Valid @RequestBody OrderDTO orderDTO) {
         OrderDTO updatedOrder = orderService.updateOrder(id, orderDTO);
         return ResponseEntity.ok(updatedOrder);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteOrder(@PathVariable Long id) {
+    public ResponseEntity<?> deleteOrder(@PathVariable @NotBlank  Long id) {
         orderService.deleteOrder(id);
         return ResponseEntity.ok().build();
     }
