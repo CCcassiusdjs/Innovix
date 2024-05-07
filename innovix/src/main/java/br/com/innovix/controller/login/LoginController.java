@@ -1,9 +1,9 @@
-package br.com.innovix.controller.autentificacao;
+package br.com.innovix.controller.login;
 
-import br.com.innovix.config.infra.DadosTokenJWT;
+import br.com.innovix.dto.user.TokenDTO;
 import br.com.innovix.config.infra.TokenService;
-import br.com.innovix.dto.usuario.DadosAutenticacao;
-import br.com.innovix.entity.usuario.Usuario;
+import br.com.innovix.dto.user.LoginDTO;
+import br.com.innovix.entity.user.User;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/login")
-public class AutenticacaoController {
+public class LoginController {
 
     @Autowired
     private AuthenticationManager manager;
@@ -25,14 +25,11 @@ public class AutenticacaoController {
     private TokenService tokenService;
 
     @PostMapping
-    public ResponseEntity doLogin(@RequestBody @Valid DadosAutenticacao dados) {
-
-        var authenticationToken = new UsernamePasswordAuthenticationToken(dados.login(), dados.senha());
+    public ResponseEntity<?> doLogin(@RequestBody @Valid LoginDTO login) {
+        var authenticationToken = new UsernamePasswordAuthenticationToken(login.login(), login.password());
         var authentication = manager.authenticate(authenticationToken);
-        Usuario usu = (Usuario) authentication.getPrincipal();
-        var tokenJWT = tokenService.createToken((Usuario) authentication.getPrincipal());
-
-        return ResponseEntity.ok(new DadosTokenJWT(tokenJWT));
+        var tokenJWT = tokenService.createToken((User) authentication.getPrincipal());
+        return ResponseEntity.ok(new TokenDTO(tokenJWT));
     }
 
 }

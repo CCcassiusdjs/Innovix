@@ -1,20 +1,17 @@
-package br.com.innovix.service.usuario;
+package br.com.innovix.service.user;
 
-import br.com.innovix.entity.usuario.Usuario;
-import br.com.innovix.repository.usuario.UsuarioRepository;
+import br.com.innovix.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
-public class AutenticacaoService implements UserDetailsService {
+public class LoginService implements UserDetailsService {
 
     @Autowired
-    private UsuarioRepository repository;
+    private UserRepository repository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

@@ -1,6 +1,6 @@
 package br.com.innovix.config.infra;
 
-import br.com.innovix.entity.usuario.Usuario;
+import br.com.innovix.entity.user.User;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -14,11 +14,11 @@ public class TokenService {
     @Value("${api.security.token.secret}")
     private String secret;
 
-    public String createToken(Usuario usuario) {
+    public String createToken(User usuario) {
         try {
             var algoritmo = Algorithm.HMAC256(secret);
             return JWT.create()
-                    .withIssuer("API Voll.med")
+                    .withIssuer("API innovix")
                     .withSubject(usuario.getLogin())
                     .sign(algoritmo);
         } catch (JWTCreationException exception){
@@ -30,7 +30,7 @@ public class TokenService {
         try {
             var algoritmo = Algorithm.HMAC256(secret);
             return JWT.require(algoritmo)
-                    .withIssuer("API Voll.med")
+                    .withIssuer("API innovix")
                     .build()
                     .verify(tokenJWT)
                     .getSubject();
