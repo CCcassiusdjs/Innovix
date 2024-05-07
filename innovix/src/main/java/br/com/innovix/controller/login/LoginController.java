@@ -1,9 +1,9 @@
 package br.com.innovix.controller.login;
 
-import br.com.innovix.dto.user.TokenDTO;
-import br.com.innovix.config.infra.TokenService;
-import br.com.innovix.dto.user.LoginDTO;
-import br.com.innovix.entity.user.User;
+import br.com.innovix.domain.user.TokenDTO;
+import br.com.innovix.config.infra.security.TokenService;
+import br.com.innovix.domain.user.LoginDTO;
+import br.com.innovix.domain.user.User;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

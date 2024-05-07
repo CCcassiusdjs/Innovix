@@ -1,7 +1,7 @@
 package br.com.innovix.controller.order;
 
-import br.com.innovix.dto.order.OrderDTO;
-import br.com.innovix.service.order.OrderService;
+import br.com.innovix.domain.order.order.OrderDTO;
+import br.com.innovix.domain.order.order.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;

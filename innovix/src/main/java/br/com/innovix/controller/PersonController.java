@@ -1,7 +1,7 @@
 package br.com.innovix.controller;
 
-import br.com.innovix.dto.PersonDTO;
-import br.com.innovix.service.PersonService;
+import br.com.innovix.domain.person.PersonDTO;
+import br.com.innovix.domain.person.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

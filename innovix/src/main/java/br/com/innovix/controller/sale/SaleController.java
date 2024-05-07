@@ -1,8 +1,8 @@
 package br.com.innovix.controller.sale;
 
 
-import br.com.innovix.dto.sale.SaleDTO;
-import br.com.innovix.service.sale.SaleService;
+import br.com.innovix.domain.sale.SaleDTO;
+import br.com.innovix.domain.sale.SaleService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

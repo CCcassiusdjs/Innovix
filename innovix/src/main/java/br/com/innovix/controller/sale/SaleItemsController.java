@@ -1,7 +1,7 @@
 package br.com.innovix.controller.sale;
 
-import br.com.innovix.dto.sale.SaleItemsDTO;
-import br.com.innovix.service.sale.SaleItemsService;
+import br.com.innovix.domain.sale.SaleItemsDTO;
+import br.com.innovix.domain.sale.SaleItemsService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

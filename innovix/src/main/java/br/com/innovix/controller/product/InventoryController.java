@@ -1,7 +1,7 @@
 package br.com.innovix.controller.product;
 
-import br.com.innovix.dto.product.InventoryDTO;
-import br.com.innovix.service.product.ProductServices;
+import br.com.innovix.domain.product.inventory.InventoryDTO;
+import br.com.innovix.domain.product.product.ProductServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
