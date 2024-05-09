@@ -16,11 +16,11 @@ public class TokenService {
 
     public String createToken(User usuario) {
         try {
-            var algoritmo = Algorithm.HMAC256(secret);
+            var algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
                     .withIssuer("API innovix")
                     .withSubject(usuario.getLogin())
-                    .sign(algoritmo);
+                    .sign(algorithm);
         } catch (JWTCreationException exception){
             throw new RuntimeException("erro ao gerar token jwt", exception);
         }
