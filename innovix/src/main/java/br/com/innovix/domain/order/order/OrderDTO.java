@@ -3,13 +3,13 @@ package br.com.innovix.domain.order.order;
 import br.com.innovix.domain.person.PersonEntity;
 
 public record OrderDTO(
-        Long codOrder,
+        long codOrder,
         String companyName,
         String sender,
         String recipient,
-        Double shipCost,
+        double shipCost,
         String state,
-        Long codCustomer
+        long codCustomer
 ) {
     public static OrderDTO fromEntity(OrderEntity entity) {
         return new OrderDTO(
@@ -31,11 +31,9 @@ public record OrderDTO(
         entity.setRecipient(this.recipient);
         entity.setShipCost(this.shipCost);
         entity.setState(this.state);
-        if (this.codCustomer != null) {
-            PersonEntity customer = new PersonEntity();
-            customer.setId(this.codCustomer);
-            entity.setCustomer(customer);
-        }
+        PersonEntity customer = new PersonEntity();
+        customer.setId(this.codCustomer);
+        entity.setCustomer(customer);
         return entity;
     }
 }

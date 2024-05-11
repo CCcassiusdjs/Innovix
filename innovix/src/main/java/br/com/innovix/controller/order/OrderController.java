@@ -6,7 +6,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,19 +17,23 @@ public class OrderController {
     @Autowired
     private  OrderService orderService;
 
+    @GetMapping("/teste")
+    public String teste() {
+        return "hello world";
+    }
+
     @GetMapping
     public ResponseEntity<List<OrderDTO>> getAllOrders() {
         List<OrderDTO> orders = orderService.findAllOrders();
         return ResponseEntity.ok(orders);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<OrderDTO> getOrderById(@PathVariable @NotBlank Long id) {
-        OrderDTO order = orderService.findOrderById(id);
-        return ResponseEntity.ok(order);
+    @GetMapping("/getOrder/{id}")
+    public ResponseEntity<?> getOrder(@PathVariable long id) {
+        return ResponseEntity.ok(orderService.findOrderById(id));
     }
 
-    @PostMapping
+    @PostMapping("/addOrder")
     public ResponseEntity<OrderDTO> addOrder(@Valid @RequestBody OrderDTO orderDTO) {
         OrderDTO newOrder = orderService.addOrder(orderDTO);
         return ResponseEntity.ok(newOrder);

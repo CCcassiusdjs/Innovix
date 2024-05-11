@@ -35,16 +35,11 @@ public class LoginController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid LoginDTO loginDTO) {
-      try {
-          User user = new User();
-          String hashPassword = passwordEncoder.encode(loginDTO.password());
-          user.setLogin(loginDTO.login());
-          user.setPassword(hashPassword);
-          return ResponseEntity.ok(userRepository.save(user));
-      } catch (Exception e) {
-          e.printStackTrace();
-      }
-      return null;
+        User user = new User();
+        String hashPassword = passwordEncoder.encode(loginDTO.password());
+        user.setLogin(loginDTO.login());
+        user.setPassword(hashPassword);
+        return ResponseEntity.ok(userRepository.save(user));
     }
     @PostMapping
     public ResponseEntity<?> doLogin(@RequestBody @Valid LoginDTO login) {

@@ -2,6 +2,7 @@
 
     import br.com.innovix.exception.Exceptions;
     import br.com.innovix.domain.person.PersonRepository;
+    import br.com.innovix.exception.OrderNotFoundException;
     import org.springframework.beans.factory.annotation.*;
     import org.springframework.stereotype.Service;
 
@@ -26,9 +27,9 @@
                     .collect(Collectors.toList());
         }
 
-        public OrderDTO findOrderById(Long id) {
+        public OrderDTO findOrderById(long id) {
             OrderEntity order = orderRepository.findById(id)
-                    .orElseThrow(() -> new Exceptions.OrderNotFoundException("Order not found with ID: " + id));
+                    .orElseThrow(OrderNotFoundException::new);
             return OrderDTO.fromEntity(order);
         }
 
