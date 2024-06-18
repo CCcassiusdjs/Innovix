@@ -1,10 +1,11 @@
 package com.innovix.entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import javax.persistence.*;
+import javax.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.Date;
 
@@ -12,6 +13,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "promotion")
 public class Promotion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,11 +35,10 @@ public class Promotion {
     @Temporal(TemporalType.DATE)
     private Date endDate;
 
-    private Integer duration;
+    private int duration;
 
-    @DecimalMin("0.0")
-    @DecimalMax("100.0")
-    private Double percentage;
+    @Positive
+    private double percentage;
 
     private int requiredQuantity;  // NEW: Required quantity for the promotion
     private int freeQuantity;      // NEW: Free quantity given

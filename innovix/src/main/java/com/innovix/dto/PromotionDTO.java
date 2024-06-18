@@ -14,7 +14,9 @@ public class PromotionDTO {
     private String season;
     private Date initDate;
     private Date endDate;
-    private Integer duration;
-    private Double percentage;
+    private int duration;
+    private double percentage;
+    private int requiredQuantity;  // NEW: Required quantity for the promotion
+    private int freeQuantity;      // NEW: Free quantity given
     private Long employeeId;
 }

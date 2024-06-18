@@ -1,10 +1,11 @@
 package com.innovix.entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import javax.persistence.*;
+import javax.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.Date;
 
@@ -54,23 +55,21 @@ public class Order {
     private String productDescription;
 
     @NotNull
-    @DecimalMin("0.0")
-    @Digits(integer = 10, fraction = 2)
-    @Column(nullable = false)
-    private Double productPrice;
+    @Column(nullable = false, precision = 12, scale = 2)
+    @Positive
+    private double productPrice;
 
     @NotNull
-    @Min(1)
+    @Positive
     @Column(nullable = false)
-    private Integer productQuantity;
+    private int productQuantity;
 
     @NotNull
-    @DecimalMin("0.0")
-    @Digits(integer = 10, fraction = 2)
-    @Column(nullable = false)
-    private Double productSubtotal;
+    @Positive
+    @Column(nullable = false, precision = 12, scale = 2)
+    private double productSubtotal;
 
-    private Integer freeQuantity; // NEW: Free quantity given in the promotion
+    private int freeQuantity;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)

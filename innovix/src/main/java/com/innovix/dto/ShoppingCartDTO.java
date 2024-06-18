@@ -12,9 +12,9 @@ public class ShoppingCartDTO {
     private String productImage;
     private String productName;
     private String productDescription;
-    private Double productPrice;
-    private Integer productQuantity;
-    private Double productSubtotal;
-    private Double subtotal;
+    private double productPrice;
+    private int productQuantity;
+    private double productSubtotal;
+    private double subtotal;
     private Long productId;
 }

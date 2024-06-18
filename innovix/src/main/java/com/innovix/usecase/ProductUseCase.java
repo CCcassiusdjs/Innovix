@@ -81,7 +81,7 @@ public class ProductUseCase {
      * @param maxPrice the maximum price.
      * @return a list of products within the specified price range.
      */
-    public List<Product> listProductsByPriceBetween(Double minPrice, Double maxPrice) {
+    public List<Product> listProductsByPriceBetween(double minPrice, double maxPrice) {
         return productService.findByPriceBetween(minPrice, maxPrice);
     }
 

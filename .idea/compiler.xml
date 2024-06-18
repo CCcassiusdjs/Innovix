@@ -6,15 +6,16 @@
       <profile name="Gradle Imported" enabled="true">
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.30/f195ee86e6c896ea47a1d39defbe20eb59cd149d/lombok-1.18.30.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.32/17d46b3e205515e1e8efd3ee4d57ce8018914163/lombok-1.18.32.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mapstruct/mapstruct-processor/1.5.2.Final/74a21679400fceb1f98987926cea1786c0e39e77/mapstruct-processor-1.5.2.Final.jar" />
         </processorPath>
         <module name="br.com.innovix.innovix.main" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="br.com.innovix.innovix.main" target="17" />
-      <module name="innovix" target="17" />
-      <module name="innovix.test" target="17" />
+      <module name="br.com.innovix.innovix.main" target="20" />
+      <module name="innovix" target="20" />
+      <module name="innovix.test" target="20" />
     </bytecodeTargetLevel>
   </component>
 </project>

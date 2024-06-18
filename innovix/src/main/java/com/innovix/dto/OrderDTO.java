@@ -18,8 +18,9 @@ public class OrderDTO {
     private String productImage;
     private String productName;
     private String productDescription;
-    private Double productPrice;
-    private Integer productQuantity;
-    private Double productSubtotal;
+    private double productPrice;
+    private int productQuantity;
+    private double productSubtotal;
+    private int freeQuantity;
     private Long productId;
 }

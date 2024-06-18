@@ -1,15 +1,17 @@
 package com.innovix.entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import javax.persistence.*;
+import javax.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.relational.core.mapping.Table;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "shopping_cart")
 public class ShoppingCart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,27 +33,27 @@ public class ShoppingCart {
     private String productDescription;
 
     @NotNull
-    @DecimalMin("0.0")
+    @Positive
     @Digits(integer = 10, fraction = 2)
     @Column(nullable = false)
-    private Double productPrice;
+    private double productPrice;
 
     @NotNull
-    @Min(1)
+    @Positive
     @Column(nullable = false)
-    private Integer productQuantity;
+    private int productQuantity;
 
     @NotNull
-    @DecimalMin("0.0")
+    @Positive
     @Digits(integer = 10, fraction = 2)
     @Column(nullable = false)
-    private Double productSubtotal;
+    private double productSubtotal;
 
     @NotNull
-    @DecimalMin("0.0")
+    @Positive
     @Digits(integer = 10, fraction = 2)
     @Column(nullable = false)
-    private Double subtotal;
+    private double subtotal;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)

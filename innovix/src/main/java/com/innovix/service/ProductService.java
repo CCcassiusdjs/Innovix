@@ -81,7 +81,7 @@ public class ProductService {
      * @param maxPrice the maximum price.
      * @return a list of products within the specified price range.
      */
-    public List<Product> findByPriceBetween(Double minPrice, Double maxPrice) {
+    public List<Product> findByPriceBetween(double minPrice, double maxPrice) {
         return productRepository.findByPriceBetween(minPrice, maxPrice);
     }
 

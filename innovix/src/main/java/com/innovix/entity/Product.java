@@ -1,15 +1,17 @@
 package com.innovix.entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import javax.persistence.*;
+import javax.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.relational.core.mapping.Table;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "product")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +26,7 @@ public class Product {
     private String description;
 
     @Size(max = 2)
-    @Column(nullable = true)
+    @Column
     private String size;
 
     @Size(max = 30)
@@ -36,10 +38,10 @@ public class Product {
     private String images;
 
     @NotNull
-    @DecimalMin("0.0")
+    @Positive
     @Digits(integer = 10, fraction = 2)
     @Column(nullable = false)
-    private Double price;
+    private double price;
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
@@ -52,8 +54,8 @@ public class Product {
     @Embeddable
     @Data
     public static class Dimensions {
-        private Double length;
-        private Double width;
-        private Double height;
+        private double length;
+        private double width;
+        private double height;
     }
 }

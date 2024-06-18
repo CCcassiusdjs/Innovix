@@ -9,7 +9,7 @@ import lombok.Data;
 public class AddressDTO {
     private Long addressId;
     private String streetName;
-    private Integer number;
+    private int number;
     private String unit;
     private String zipCode;
     private String city;

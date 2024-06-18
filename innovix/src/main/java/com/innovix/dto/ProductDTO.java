@@ -14,14 +14,14 @@ public class ProductDTO {
     private String material;
     private DimensionsDTO dimensions;
     private String images;
-    private Double price;
+    private double price;
     private Long categoryId;
     private Long promotionId;
 
     @Data
     public static class DimensionsDTO {
-        private Double length;
-        private Double width;
-        private Double height;
+        private double length;
+        private double width;
+        private double height;
     }
 }
