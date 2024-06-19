@@ -1,14 +1,12 @@
 package com.innovix.entity;
 
 import javax.validation.constraints.*;
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -22,7 +20,7 @@ public class PurchaseOrder {
     @NotNull
     @Temporal(TemporalType.DATE)
     @Column(nullable = false)
-    private Date orderDate;
+    private LocalDate orderLocalDate;
 
     @NotNull
     @Size(max = 20)

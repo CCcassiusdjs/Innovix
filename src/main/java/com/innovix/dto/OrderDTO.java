@@ -2,7 +2,7 @@ package com.innovix.dto;
 
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * Data Transfer Object for the Order entity.
@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 public class OrderDTO {
     private Long orderId;
-    private Date orderDate;
+    private LocalDate orderLocalDate;
     private String orderStatus;
     private Long customerId;
     private Long addressOriginId;

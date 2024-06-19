@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -73,8 +73,8 @@ public class PromotionService {
      * @param date the date.
      * @return a list of promotions with init date before the specified date.
      */
-    public List<Promotion> findByInitDateBefore(Date date) {
-        return promotionRepository.findByInitDateBefore(date);
+    public List<Promotion> findByInitLocalDateBefore(LocalDate date) {
+        return promotionRepository.findByInitLocalDateBefore(date);
     }
 
     /**
@@ -83,8 +83,8 @@ public class PromotionService {
      * @param date the date.
      * @return a list of promotions with end date after the specified date.
      */
-    public List<Promotion> findByEndDateAfter(Date date) {
-        return promotionRepository.findByEndDateAfter(date);
+    public List<Promotion> findByEndLocalDateAfter(LocalDate date) {
+        return promotionRepository.findByEndLocalDateAfter(date);
     }
 
     /**

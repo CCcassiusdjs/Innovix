@@ -5,12 +5,12 @@ import com.innovix.entity.Person;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 @Repository
 public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, Long> {
     List<PurchaseOrder> findByOrderStatus(String orderStatus);
     List<PurchaseOrder> findByCustomer(Person customer);
-    List<PurchaseOrder> findByOrderDateBetween(Date startDate, Date endDate);
+    List<PurchaseOrder> findByOrderLocalDateBetween(LocalDate startLocalDate, LocalDate endLocalDate);
     List<PurchaseOrder> findByProductId(Long productId);
 }

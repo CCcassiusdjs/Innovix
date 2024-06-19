@@ -6,7 +6,7 @@ import com.innovix.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -79,12 +79,12 @@ public class OrderUseCase {
     /**
      * Lists orders by date range.
      *
-     * @param startDate the start date.
-     * @param endDate the end date.
+     * @param startLocalDate the start date.
+     * @param endLocalDate the end date.
      * @return a list of orders within the specified date range.
      */
-    public List<PurchaseOrder> listOrdersByDateRange(Date startDate, Date endDate) {
-        return orderService.findByDateRange(startDate, endDate);
+    public List<PurchaseOrder> listOrdersByLocalDateRange(LocalDate startLocalDate, LocalDate endLocalDate) {
+        return orderService.findByLocalDateRange(startLocalDate, endLocalDate);
     }
 
     /**

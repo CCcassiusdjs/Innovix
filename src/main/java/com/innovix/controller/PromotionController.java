@@ -6,7 +6,7 @@ import com.innovix.usecase.PromotionUseCase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,15 +48,15 @@ public class PromotionController {
     }
 
     @GetMapping("/init-date")
-    public List<PromotionDTO> listByInitDateBefore(@RequestParam Date date) {
-        return promotionUseCase.listPromotionsByInitDateBefore(date).stream()
+    public List<PromotionDTO> listByInitLocalDateBefore(@RequestParam LocalDate date) {
+        return promotionUseCase.listPromotionsByInitLocalDateBefore(date).stream()
                 .map(PromotionMapper.INSTANCE::toDto)
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/end-date")
-    public List<PromotionDTO> listByEndDateAfter(@RequestParam Date date) {
-        return promotionUseCase.listPromotionsByEndDateAfter(date).stream()
+    public List<PromotionDTO> listByEndLocalDateAfter(@RequestParam LocalDate date) {
+        return promotionUseCase.listPromotionsByEndLocalDateAfter(date).stream()
                 .map(PromotionMapper.INSTANCE::toDto)
                 .collect(Collectors.toList());
     }

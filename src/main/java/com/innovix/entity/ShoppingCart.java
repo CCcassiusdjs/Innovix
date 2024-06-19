@@ -1,7 +1,6 @@
 package com.innovix.entity;
 
 import javax.validation.constraints.*;
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

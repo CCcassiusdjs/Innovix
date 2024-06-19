@@ -1,105 +1,79 @@
 package com.innovix.service;
 
+import com.innovix.dto.PersonDTO;
 import com.innovix.entity.Person;
+import com.innovix.entity.PersonType;
+import com.innovix.exception.UserExistentException;
+import com.innovix.mapper.PersonMapper;
 import com.innovix.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-/**
- * Service to manage operations related to {@link Person}.
- */
 @Service
-public class PersonService {
+public class PersonService implements UserDetailsService {
 
     private final PersonRepository personRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    /**
-     * Constructor for dependency injection.
-     *
-     * @param personRepository the person repository.
-     */
     @Autowired
-    public PersonService(PersonRepository personRepository) {
+    public PersonService(PersonRepository personRepository, PasswordEncoder passwordEncoder) {
         this.personRepository = personRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    /**
-     * Lists all persons.
-     *
-     * @return a list of persons.
-     */
-    public List<Person> listAll() {
-        return personRepository.findAll();
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return personRepository.findByEmail(username);
     }
 
-    /**
-     * Saves a new person.
-     *
-     * @param person the person to save.
-     * @return the saved person.
-     */
-    public Person save(Person person) {
-        return personRepository.save(person);
+    public boolean userExists(String email) {
+        return personRepository.existsByEmail(email);
     }
 
-    /**
-     * Finds a person by ID.
-     *
-     * @param id the ID of the person.
-     * @return the found person, or {@code null} if not found.
-     */
-    public Person findById(Long id) {
-        return personRepository.findById(id).orElse(null);
+    public List<PersonDTO> listAll() {
+        return personRepository.findAll().stream()
+                .map(PersonMapper.INSTANCE::toDto)
+                .collect(Collectors.toList());
     }
 
-    /**
-     * Finds a person by email.
-     *
-     * @param email the email of the person.
-     * @return the found person.
-     */
-    public Person findByEmail(String email) {
-        return personRepository.findByEmail(email);
+    public PersonDTO findById(Long id) {
+        return PersonMapper.INSTANCE.toDto(personRepository.findById(id).orElse(null));
     }
 
-    /**
-     * Finds a person by CPF.
-     *
-     * @param cpf the CPF of the person.
-     * @return the found person.
-     */
-    public Person findByCpf(String cpf) {
-        return personRepository.findByCpf(cpf);
+    public PersonDTO save(PersonDTO personDTO) {
+        Person person = PersonMapper.INSTANCE.toEntity(personDTO);
+        person = personRepository.save(person);
+        return PersonMapper.INSTANCE.toDto(person);
     }
 
-    /**
-     * Finds persons by name containing.
-     *
-     * @param name the name to search.
-     * @return a list of persons whose names contain the specified string.
-     */
-    public List<Person> findByNameContaining(String name) {
-        return personRepository.findByNameContaining(name);
-    }
-
-    /**
-     * Finds persons by type.
-     *
-     * @param type the type of the person.
-     * @return a list of persons with the specified type.
-     */
-    public List<Person> findByType(String type) {
-        return personRepository.findByType(type);
-    }
-
-    /**
-     * Deletes a person by ID.
-     *
-     * @param id the ID of the person to delete.
-     */
     public void delete(Long id) {
         personRepository.deleteById(id);
+    }
+
+    public void registerCustomer(PersonDTO personDTO) {
+        if (userExists(personDTO.getEmail())) {
+            throw new UserExistentException();
+        }
+        Person person = PersonMapper.INSTANCE.toEntity(personDTO);
+        person.setType(PersonType.CUSTOMER);
+        person.setPassword(passwordEncoder.encode(person.getPassword()));
+        personRepository.save(person);
+    }
+
+    public void registerEmployee(PersonDTO personDTO) {
+        if (userExists(personDTO.getEmail())) {
+            throw new UserExistentException();
+        }
+        Person person = PersonMapper.INSTANCE.toEntity(personDTO);
+        person.setType(PersonType.EMPLOYEE);
+        person.setPassword(passwordEncoder.encode(person.getPassword()));
+        personRepository.save(person);
     }
 }

@@ -5,7 +5,7 @@ import com.innovix.service.PromotionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -75,8 +75,8 @@ public class PromotionUseCase {
      * @param date the date.
      * @return a list of promotions with init date before the specified date.
      */
-    public List<Promotion> listPromotionsByInitDateBefore(Date date) {
-        return promotionService.findByInitDateBefore(date);
+    public List<Promotion> listPromotionsByInitLocalDateBefore(LocalDate date) {
+        return promotionService.findByInitLocalDateBefore(date);
     }
 
     /**
@@ -85,8 +85,8 @@ public class PromotionUseCase {
      * @param date the date.
      * @return a list of promotions with end date after the specified date.
      */
-    public List<Promotion> listPromotionsByEndDateAfter(Date date) {
-        return promotionService.findByEndDateAfter(date);
+    public List<Promotion> listPromotionsByEndLocalDateAfter(LocalDate date) {
+        return promotionService.findByEndLocalDateAfter(date);
     }
 
     /**

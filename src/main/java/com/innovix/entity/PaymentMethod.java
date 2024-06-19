@@ -1,13 +1,11 @@
 package com.innovix.entity;
 
 import javax.validation.constraints.*;
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -36,7 +34,7 @@ public class PaymentMethod {
     @NotNull
     @Temporal(TemporalType.DATE)
     @Column(nullable = false)
-    private Date cardExpirationDate;
+    private LocalDate cardExpirationLocalDate;
 
     @NotNull
     @Size(min = 3, max = 3)

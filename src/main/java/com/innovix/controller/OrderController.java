@@ -7,7 +7,7 @@ import com.innovix.usecase.OrderUseCase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,8 +56,8 @@ public class OrderController {
     }
 
     @GetMapping("/date-range")
-    public List<OrderDTO> listByDateRange(@RequestParam Date startDate, @RequestParam Date endDate) {
-        return orderUseCase.listOrdersByDateRange(startDate, endDate).stream()
+    public List<OrderDTO> listByLocalDateRange(@RequestParam LocalDate startLocalDate, @RequestParam LocalDate endLocalDate) {
+        return orderUseCase.listOrdersByLocalDateRange(startLocalDate, endLocalDate).stream()
                 .map(OrderMapper.INSTANCE::toDto)
                 .collect(Collectors.toList());
     }

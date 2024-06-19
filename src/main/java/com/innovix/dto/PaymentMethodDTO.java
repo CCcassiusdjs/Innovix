@@ -2,7 +2,7 @@ package com.innovix.dto;
 
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * Data Transfer Object for the PaymentMethod entity.
@@ -13,7 +13,7 @@ public class PaymentMethodDTO {
     private String paymentType;
     private String cardHolder;
     private String cardNumber;
-    private Date cardExpirationDate;
+    private LocalDate cardExpirationLocalDate;
     private String cardCvv;
     private Long personId;
 }

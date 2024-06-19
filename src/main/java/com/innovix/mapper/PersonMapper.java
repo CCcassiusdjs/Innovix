@@ -6,29 +6,28 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-/**
- * Mapper to convert between {@link Person} and {@link PersonDTO}.
- */
 @Mapper
 public interface PersonMapper {
 
     PersonMapper INSTANCE = Mappers.getMapper(PersonMapper.class);
 
-    /**
-     * Converts a {@link Person} entity to a {@link PersonDTO}.
-     *
-     * @param person the {@link Person} entity to convert.
-     * @return the resulting {@link PersonDTO}.
-     */
-    @Mapping(source = "person.id", target = "personId")
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "email", target = "email")
+    @Mapping(source = "fullName", target = "fullName")
+    @Mapping(source = "cpf", target = "cpf")
+    @Mapping(source = "password", target = "password")
+    @Mapping(source = "phone", target = "phone")
+    @Mapping(source = "birthday", target = "birthday")
+    @Mapping(source = "type", target = "type")
     PersonDTO toDto(Person person);
 
-    /**
-     * Converts a {@link PersonDTO} to a {@link Person} entity.
-     *
-     * @param personDTO the {@link PersonDTO} to convert.
-     * @return the resulting {@link Person} entity.
-     */
-    @Mapping(source = "personDTO.personId", target = "id")
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "email", target = "email")
+    @Mapping(source = "fullName", target = "fullName")
+    @Mapping(source = "cpf", target = "cpf")
+    @Mapping(source = "password", target = "password")
+    @Mapping(source = "phone", target = "phone")
+    @Mapping(source = "birthday", target = "birthday")
+    @Mapping(source = "type", target = "type")
     Person toEntity(PersonDTO personDTO);
 }
