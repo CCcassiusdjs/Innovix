@@ -3,8 +3,9 @@ package com.innovix.controller;
 import com.innovix.dto.ShoppingCartDTO;
 import com.innovix.entity.Person;
 import com.innovix.mapper.ShoppingCartMapper;
-import com.innovix.usecase.ShoppingCartUseCase;
+import com.innovix.usecase.CustomerUseCase;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,41 +15,46 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/shopping-carts")
 public class ShoppingCartController {
 
-    private final ShoppingCartUseCase shoppingCartUseCase;
+    private final CustomerUseCase customerUseCase;
 
     @Autowired
-    public ShoppingCartController(ShoppingCartUseCase shoppingCartUseCase) {
-        this.shoppingCartUseCase = shoppingCartUseCase;
+    public ShoppingCartController(CustomerUseCase customerUseCase) {
+        this.customerUseCase = customerUseCase;
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     public List<ShoppingCartDTO> listAll() {
-        return shoppingCartUseCase.listAllShoppingCarts().stream()
+        return customerUseCase.listAllShoppingCarts().stream()
                 .map(ShoppingCartMapper.INSTANCE::toDto)
                 .collect(Collectors.toList());
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     public ShoppingCartDTO save(@RequestBody ShoppingCartDTO shoppingCartDTO) {
         return ShoppingCartMapper.INSTANCE.toDto(
-                shoppingCartUseCase.createShoppingCart(ShoppingCartMapper.INSTANCE.toEntity(shoppingCartDTO))
+                customerUseCase.createShoppingCart(ShoppingCartMapper.INSTANCE.toEntity(shoppingCartDTO))
         );
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     public ShoppingCartDTO getById(@PathVariable Long id) {
-        return ShoppingCartMapper.INSTANCE.toDto(shoppingCartUseCase.getShoppingCartById(id));
+        return ShoppingCartMapper.INSTANCE.toDto(customerUseCase.getShoppingCartById(id));
     }
 
     @GetMapping("/customer/{customerId}")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     public List<ShoppingCartDTO> listByCustomer(@PathVariable Long customerId) {
-        return shoppingCartUseCase.listShoppingCartsByCustomer(new Person(customerId)).stream()
+        return customerUseCase.listShoppingCartsByCustomer(new Person(customerId)).stream()
                 .map(ShoppingCartMapper.INSTANCE::toDto)
                 .collect(Collectors.toList());
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
     public void delete(@PathVariable Long id) {
-        shoppingCartUseCase.deleteShoppingCart(id);
+        customerUseCase.deleteShoppingCart(id);
     }
 }

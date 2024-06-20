@@ -45,7 +45,7 @@ public class DataInitializer {
         this.purchaseOrderRepository = purchaseOrderRepository;
         this.shoppingCartRepository = shoppingCartRepository;
         this.storeRepository = storeRepository;
-        this.faker = new Faker(new Locale("en-US")); // Gera dados em inglês
+        this.faker = new Faker(new Locale("pt-BR")); // Gera dados em português
         this.random = new Random();
     }
 
@@ -64,7 +64,7 @@ public class DataInitializer {
 
     private void createCategories() {
         List<Category> categories = new ArrayList<>();
-        String[] categoryNames = {"Electronics", "Books", "Clothing", "Food", "Furniture", "Toys", "Sports", "Health", "Beauty", "Automotive"};
+        String[] categoryNames = {"Eletrônicos", "Livros", "Roupas", "Alimentos", "Móveis", "Brinquedos", "Esportes", "Saúde", "Beleza", "Automotivo"};
         for (String categoryName : categoryNames) {
             Optional<Category> existingCategory = Optional.ofNullable(categoryRepository.findByName(categoryName));
             if (existingCategory.isEmpty()) {
@@ -100,7 +100,7 @@ public class DataInitializer {
             address.setStreetName(faker.address().streetName());
             address.setNumber(faker.number().numberBetween(1, 1000));
             address.setUnit(faker.address().secondaryAddress());
-            address.setZipCode(faker.regexify("\\d{5}-\\d{4}"));
+            address.setZipCode(faker.regexify("\\d{5}-\\d{3}"));
             address.setCity(faker.address().city());
             address.setState(faker.address().state());
             address.setCountry(faker.address().country());
@@ -130,9 +130,9 @@ public class DataInitializer {
         List<Promotion> promotions = new ArrayList<>();
         List<Person> employees = personRepository.findByType(PersonType.EMPLOYEE);
         String[] promoTypes = {
-                "Black Friday", "Cyber Monday", "Christmas", "New Year", "Carnival", "Easter",
-                "Mother's Day", "Father's Day", "Children's Day", "Valentine's Day",
-                "Summer Vacation", "Winter Vacation", "Customer's Birthday"
+                "Black Friday", "Cyber Monday", "Natal", "Ano Novo", "Carnaval", "Páscoa",
+                "Dia das Mães", "Dia dos Pais", "Dia das Crianças", "Dia dos Namorados",
+                "Férias de Verão", "Férias de Inverno", "Aniversário do Cliente"
         };
         for (String promoType : promoTypes) {
             Promotion promotion = new Promotion();
@@ -158,7 +158,7 @@ public class DataInitializer {
             Product product = new Product();
             product.setName(faker.commerce().productName());
             product.setDescription(faker.lorem().sentence());
-            product.setSize(faker.options().option("S", "M", "L", "XL"));
+            product.setSize(faker.options().option("P", "M", "G", "GG")); // Tamanhos em português
             product.setMaterial(faker.commerce().material());
             Product.Dimensions dimensions = new Product.Dimensions();
             dimensions.setLength(faker.number().randomDouble(2, 10, 100));
@@ -221,7 +221,7 @@ public class DataInitializer {
                 Product product = products.get(random.nextInt(products.size()));
                 PurchaseOrder order = new PurchaseOrder();
                 order.setOrderLocalDate(LocalDate.now());
-                order.setOrderStatus(faker.options().option("PENDING", "SHIPPED", "DELIVERED"));
+                order.setOrderStatus(faker.options().option("PENDENTE", "ENVIADO", "ENTREGUE"));
                 order.setCustomer(customer);
                 order.setAddressOrigin(addresses.get(random.nextInt(addresses.size())));
                 order.setAddressDestination(addresses.get(random.nextInt(addresses.size())));

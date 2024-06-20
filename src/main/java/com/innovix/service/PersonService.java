@@ -37,10 +37,15 @@ public class PersonService implements UserDetailsService {
         return personRepository.existsByEmail(email);
     }
 
+
     public List<PersonDTO> listAll() {
         return personRepository.findAll().stream()
                 .map(PersonMapper.INSTANCE::toDto)
                 .collect(Collectors.toList());
+    }
+
+    public PersonDTO findByEmail(String email) {
+        return PersonMapper.INSTANCE.toDto(personRepository.findByEmail(email));
     }
 
     public PersonDTO findById(Long id) {
@@ -56,6 +61,7 @@ public class PersonService implements UserDetailsService {
     public void delete(Long id) {
         personRepository.deleteById(id);
     }
+
 
     public void registerCustomer(PersonDTO personDTO) {
         if (userExists(personDTO.getEmail())) {
@@ -76,4 +82,12 @@ public class PersonService implements UserDetailsService {
         person.setPassword(passwordEncoder.encode(person.getPassword()));
         personRepository.save(person);
     }
+
+    public List<PersonDTO> listAllByType(PersonType type) {
+        return personRepository.findByType(type).stream()
+                .map(PersonMapper.INSTANCE::toDto)
+                .collect(Collectors.toList());
+    }
+
+
 }

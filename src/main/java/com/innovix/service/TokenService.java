@@ -22,6 +22,7 @@ public class TokenService {
             return JWT.create()
                     .withIssuer("API innovix")
                     .withSubject(user.getEmail())
+                    .withClaim(USER_TYPE, user.getType().getValue())
                     .sign(algorithm);
         } catch (JWTCreationException exception) {
             throw new RuntimeException("Error generating JWT token", exception);

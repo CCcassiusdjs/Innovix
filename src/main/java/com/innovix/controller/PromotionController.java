@@ -2,8 +2,9 @@ package com.innovix.controller;
 
 import com.innovix.dto.PromotionDTO;
 import com.innovix.mapper.PromotionMapper;
-import com.innovix.usecase.PromotionUseCase;
+import com.innovix.usecase.EmployeeUseCase;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -14,62 +15,70 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/promotions")
 public class PromotionController {
 
-    private final PromotionUseCase promotionUseCase;
+    private final EmployeeUseCase employeeUseCase;
 
     @Autowired
-    public PromotionController(PromotionUseCase promotionUseCase) {
-        this.promotionUseCase = promotionUseCase;
+    public PromotionController(EmployeeUseCase employeeUseCase) {
+        this.employeeUseCase = employeeUseCase;
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('CUSTOMER', 'EMPLOYEE')")
     public List<PromotionDTO> listAll() {
-        return promotionUseCase.listAllPromotions().stream()
+        return employeeUseCase.listAllPromotions().stream()
                 .map(PromotionMapper.INSTANCE::toDto)
                 .collect(Collectors.toList());
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('EMPLOYEE')")
     public PromotionDTO save(@RequestBody PromotionDTO promotionDTO) {
         return PromotionMapper.INSTANCE.toDto(
-                promotionUseCase.createPromotion(PromotionMapper.INSTANCE.toEntity(promotionDTO))
+                employeeUseCase.createPromotion(PromotionMapper.INSTANCE.toEntity(promotionDTO))
         );
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('CUSTOMER', 'EMPLOYEE')")
     public PromotionDTO getById(@PathVariable Long id) {
-        return PromotionMapper.INSTANCE.toDto(promotionUseCase.getPromotionById(id));
+        return PromotionMapper.INSTANCE.toDto(employeeUseCase.getPromotionById(id));
     }
 
     @GetMapping("/season/{season}")
+    @PreAuthorize("hasAnyAuthority('CUSTOMER', 'EMPLOYEE')")
     public List<PromotionDTO> listBySeason(@PathVariable String season) {
-        return promotionUseCase.listPromotionsBySeason(season).stream()
+        return employeeUseCase.listPromotionsBySeason(season).stream()
                 .map(PromotionMapper.INSTANCE::toDto)
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/init-date")
+    @PreAuthorize("hasAnyAuthority('CUSTOMER', 'EMPLOYEE')")
     public List<PromotionDTO> listByInitLocalDateBefore(@RequestParam LocalDate date) {
-        return promotionUseCase.listPromotionsByInitLocalDateBefore(date).stream()
+        return employeeUseCase.listPromotionsByInitLocalDateBefore(date).stream()
                 .map(PromotionMapper.INSTANCE::toDto)
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/end-date")
+    @PreAuthorize("hasAnyAuthority('CUSTOMER', 'EMPLOYEE')")
     public List<PromotionDTO> listByEndLocalDateAfter(@RequestParam LocalDate date) {
-        return promotionUseCase.listPromotionsByEndLocalDateAfter(date).stream()
+        return employeeUseCase.listPromotionsByEndLocalDateAfter(date).stream()
                 .map(PromotionMapper.INSTANCE::toDto)
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/employee/{employeeId}")
+    @PreAuthorize("hasAnyAuthority('CUSTOMER', 'EMPLOYEE')")
     public List<PromotionDTO> listByEmployeeId(@PathVariable Long employeeId) {
-        return promotionUseCase.listPromotionsByEmployeeId(employeeId).stream()
+        return employeeUseCase.listPromotionsByEmployeeId(employeeId).stream()
                 .map(PromotionMapper.INSTANCE::toDto)
                 .collect(Collectors.toList());
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('EMPLOYEE')")
     public void delete(@PathVariable Long id) {
-        promotionUseCase.deletePromotion(id);
+        employeeUseCase.deletePromotion(id);
     }
 }

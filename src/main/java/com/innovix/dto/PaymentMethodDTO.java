@@ -4,9 +4,6 @@ import lombok.Data;
 
 import java.time.LocalDate;
 
-/**
- * Data Transfer Object for the PaymentMethod entity.
- */
 @Data
 public class PaymentMethodDTO {
     private Long paymentMethodId;

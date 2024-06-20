@@ -40,14 +40,30 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.GET, "/login/employee").hasAuthority("EMPLOYEE")
                         .requestMatchers(HttpMethod.POST, "/login/registerCustomer").permitAll()
                         .requestMatchers(HttpMethod.POST, "/login/registerEmployee").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/products").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/payment-methods").permitAll()
-                        //.requestMatchers(HttpMethod.GET, "/api/products").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/products").hasAuthority("EMPLOYEE")
+                        .requestMatchers(HttpMethod.POST, "/api/payment-methods").hasAuthority("CUSTOMER")
+                        .requestMatchers(HttpMethod.GET, "/api/products").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/addresses").hasAnyAuthority("CUSTOMER", "EMPLOYEE")
+                        .requestMatchers(HttpMethod.POST, "/api/addresses").hasAuthority("EMPLOYEE")
+                        .requestMatchers(HttpMethod.GET, "/api/categories").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/categories").hasAuthority("EMPLOYEE")
+                        .requestMatchers(HttpMethod.GET, "/api/orders/customer/**").hasAuthority("CUSTOMER")
+                        .requestMatchers(HttpMethod.GET, "/api/orders/employee/**").hasAuthority("EMPLOYEE")
+                        .requestMatchers(HttpMethod.GET, "/api/orders").hasAnyAuthority("CUSTOMER", "EMPLOYEE")
+                        .requestMatchers(HttpMethod.POST, "/api/orders").hasAuthority("CUSTOMER")
+                        .requestMatchers(HttpMethod.GET, "/api/payment-methods/**").hasAuthority("CUSTOMER")
+                        .requestMatchers(HttpMethod.GET, "/api/promotions").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/promotions").hasAuthority("EMPLOYEE")
+                        .requestMatchers(HttpMethod.GET, "/api/shopping-carts/**").hasAuthority("CUSTOMER")
+                        .requestMatchers(HttpMethod.GET, "/api/stores/**").hasAnyAuthority("CUSTOMER", "EMPLOYEE")
+                        .requestMatchers(HttpMethod.POST, "/api/stores/**").hasAuthority("EMPLOYEE")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {

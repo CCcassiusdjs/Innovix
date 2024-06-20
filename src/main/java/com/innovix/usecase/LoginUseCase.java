@@ -1,8 +1,8 @@
 package com.innovix.usecase;
 
 import com.innovix.dto.LoginDTO;
-import com.innovix.dto.PersonDTO;
 import com.innovix.entity.Person;
+import com.innovix.entity.PersonType;
 import com.innovix.service.PersonService;
 import com.innovix.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,14 +27,14 @@ public class LoginUseCase {
     public String login(LoginDTO loginDTO) {
         var authenticationToken = new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password());
         var authentication = manager.authenticate(authenticationToken);
-        return tokenService.createToken((Person) authentication.getPrincipal());
-    }
+        Person person = (Person) authentication.getPrincipal();
 
-    public void registerCustomer(PersonDTO personDTO) {
-        personService.registerCustomer(personDTO);
-    }
-
-    public void registerEmployee(PersonDTO personDTO) {
-        personService.registerEmployee(personDTO);
+        if (person.getType() == PersonType.CUSTOMER) {
+            return tokenService.createToken(person);
+        } else if (person.getType() == PersonType.EMPLOYEE) {
+            return tokenService.createToken(person);
+        } else {
+            throw new IllegalStateException("Unknown user type");
+        }
     }
 }

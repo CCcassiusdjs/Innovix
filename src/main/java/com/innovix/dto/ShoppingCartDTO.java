@@ -2,9 +2,6 @@ package com.innovix.dto;
 
 import lombok.Data;
 
-/**
- * Data Transfer Object for the ShoppingCart entity.
- */
 @Data
 public class ShoppingCartDTO {
     private Long shoppingCartId;
