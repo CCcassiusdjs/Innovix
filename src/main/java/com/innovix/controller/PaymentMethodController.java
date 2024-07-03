@@ -4,6 +4,7 @@ import com.innovix.dto.PaymentMethodDTO;
 import com.innovix.mapper.PaymentMethodMapper;
 import com.innovix.usecase.CustomerUseCase;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -67,7 +68,8 @@ public class PaymentMethodController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         customerUseCase.deletePaymentMethod(id);
+        return ResponseEntity.noContent().build();
     }
 }
