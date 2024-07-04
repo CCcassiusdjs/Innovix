@@ -31,7 +31,10 @@ public class StoreRepositoryTest {
     @Autowired
     private PersonRepository personRepository;
 
+    @Autowired
     private Address address;
+
+    @Autowired
     private Person person;
 
     @org.junit.jupiter.api.BeforeEach
@@ -41,8 +44,8 @@ public class StoreRepositoryTest {
         address.setState("State A");
         address.setCountry("Country A");
 
-        person = new Person();
-        person.setName("John Doe");
+        person = new Person(1L);
+        person.setFullName("John Doe");
 
         address = addressRepository.save(address);
         person = personRepository.save(person);

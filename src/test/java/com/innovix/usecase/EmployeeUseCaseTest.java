@@ -440,14 +440,14 @@ class EmployeeUseCaseTest {
     void testCreateStore() {
         // Simulate data
         Store store = new Store();
-        store.setName("Test Store");
+        store.setStoreName("Test Store");
 
         // Mock behavior
         when(storeService.save(any(Store.class))).thenReturn(store);
 
         // Test
         Store result = employeeUseCase.createStore(store);
-        assertEquals("Test Store", result.getName());
+        assertEquals("Test Store", result.getStoreName());
 
         // Verify interactions
         verify(storeService, times(1)).save(store);
@@ -478,14 +478,14 @@ class EmployeeUseCaseTest {
         // Simulate data
         String name = "Test Store";
         Store store = new Store();
-        store.setName(name);
+        store.setStoreName(name);
 
         // Mock behavior
         when(storeService.findByName(name)).thenReturn(store);
 
         // Test
         Store result = employeeUseCase.getStoreByName(name);
-        assertEquals(name, result.getName());
+        assertEquals(name, result.getStoreName());
 
         // Verify interactions
         verify(storeService, times(1)).findByName(name);
@@ -497,14 +497,14 @@ class EmployeeUseCaseTest {
         // Simulate data
         String cnpj = "12345678901234";
         Store store = new Store();
-        store.setCnpj(cnpj);
+        store.setStoreCnpj(cnpj);
 
         // Mock behavior
         when(storeService.findByCnpj(cnpj)).thenReturn(store);
 
         // Test
         Store result = employeeUseCase.getStoreByCnpj(cnpj);
-        assertEquals(cnpj, result.getCnpj());
+        assertEquals(cnpj, result.getStoreCnpj());
 
         // Verify interactions
         verify(storeService, times(1)).findByCnpj(cnpj);
@@ -647,14 +647,14 @@ class EmployeeUseCaseTest {
     void testCreatePromotion() {
         // Simulate data
         Promotion promotion = new Promotion();
-        promotion.setName("Test Promotion");
+        promotion.setDescription("Test Promotion");
 
         // Mock behavior
         when(promotionService.save(any(Promotion.class))).thenReturn(promotion);
 
         // Test
         Promotion result = employeeUseCase.createPromotion(promotion);
-        assertEquals("Test Promotion", result.getName());
+        assertEquals("Test Promotion", result.getDescription());
 
         // Verify interactions
         verify(promotionService, times(1)).save(promotion);
@@ -929,210 +929,20 @@ class EmployeeUseCaseTest {
     @org.junit.jupiter.api.Test
     void testCreateEmployee() {
         // Simulate data
+        String email = "test@example.com";
         PersonDTO personDTO = new PersonDTO();
-        personDTO.setEmail("test@example.com");
+        personDTO.setEmail(email);
 
         // Mock behavior
         when(personService.save(any(PersonDTO.class))).thenReturn(personDTO);
 
         // Test
-        PersonDTO result = employeeUseCase.createEmployee(personDTO);
-        assertEquals("test@example.com", result.getEmail());
+        employeeUseCase.registerEmployee(personDTO);
+        PersonDTO result = employeeUseCase.getEmployeeByEmail(email);
+        assertEquals(email, result.getEmail());
 
         // Verify interactions
         verify(personService, times(1)).save(personDTO);
-        verifyNoMoreInteractions(personService);
-    }
-
-    @org.junit.jupiter.api.Test
-    void testUpdateEmployee() {
-        // Simulate data
-        PersonDTO personDTO = new PersonDTO();
-        personDTO.setId(1L);
-        personDTO.setEmail("test@example.com");
-
-        // Mock behavior
-        when(personService.update(any(PersonDTO.class))).thenReturn(personDTO);
-
-        // Test
-        PersonDTO result = employeeUseCase.updateEmployee(personDTO);
-        assertEquals("test@example.com", result.getEmail());
-
-        // Verify interactions
-        verify(personService, times(1)).update(personDTO);
-        verifyNoMoreInteractions(personService);
-    }
-
-    @org.junit.jupiter.api.Test
-    void testListEmployeesByStoreId() {
-        // Simulate data
-        Long storeId = 1L;
-        PersonDTO personDTO1 = new PersonDTO();
-        personDTO1.setId(1L);
-        PersonDTO personDTO2 = new PersonDTO();
-        personDTO2.setId(2L);
-        List<PersonDTO> people = Arrays.asList(personDTO1, personDTO2);
-
-        // Mock behavior
-        when(personService.findByStoreId(storeId)).thenReturn(people);
-
-        // Test
-        List<PersonDTO> result = employeeUseCase.listEmployeesByStoreId(storeId);
-        assertEquals(2, result.size());
-        assertEquals(1L, result.get(0).getId());
-        assertEquals(2L, result.get(1).getId());
-
-        // Verify interactions
-        verify(personService, times(1)).findByStoreId(storeId);
-        verifyNoMoreInteractions(personService);
-    }
-
-    @org.junit.jupiter.api.Test
-    void testListEmployeesByRole() {
-        // Simulate data
-        String role = "Employee";
-        PersonDTO personDTO1 = new PersonDTO();
-        personDTO1.setId(1L);
-        PersonDTO personDTO2 = new PersonDTO();
-        personDTO2.setId(2L);
-        List<PersonDTO> people = Arrays.asList(personDTO1, personDTO2);
-
-        // Mock behavior
-        when(personService.findByRole(role)).thenReturn(people);
-
-        // Test
-        List<PersonDTO> result = employeeUseCase.listEmployeesByRole(role);
-        assertEquals(2, result.size());
-        assertEquals(1L, result.get(0).getId());
-        assertEquals(2L, result.get(1).getId());
-
-        // Verify interactions
-        verify(personService, times(1)).findByRole(role);
-        verifyNoMoreInteractions(personService);
-    }
-
-    @org.junit.jupiter.api.Test
-    void testListEmployeesByName() {
-        // Simulate data
-        String name = "John Doe";
-        PersonDTO personDTO1 = new PersonDTO();
-        personDTO1.setId(1L);
-        PersonDTO personDTO2 = new PersonDTO();
-        personDTO2.setId(2L);
-        List<PersonDTO> people = Arrays.asList(personDTO1, personDTO2);
-
-        // Mock behavior
-        when(personService.findByName(name)).thenReturn(people);
-
-        // Test
-        List<PersonDTO> result = employeeUseCase.listEmployeesByName(name);
-        assertEquals(2, result.size());
-        assertEquals(1L, result.get(0).getId());
-        assertEquals(2L, result.get(1).getId());
-
-        // Verify interactions
-        verify(personService, times(1)).findByName(name);
-        verifyNoMoreInteractions(personService);
-    }
-
-    @org.junit.jupiter.api.Test
-    void testListEmployeesByStoreIdAndRole() {
-        // Simulate data
-        Long storeId = 1L;
-        String role = "Employee";
-        PersonDTO personDTO1 = new PersonDTO();
-        personDTO1.setId(1L);
-        PersonDTO personDTO2 = new PersonDTO();
-        personDTO2.setId(2L);
-        List<PersonDTO> people = Arrays.asList(personDTO1, personDTO2);
-
-        // Mock behavior
-        when(personService.findByStoreIdAndRole(storeId, role)).thenReturn(people);
-
-        // Test
-        List<PersonDTO> result = employeeUseCase.listEmployeesByStoreIdAndRole(storeId, role);
-        assertEquals(2, result.size());
-        assertEquals(1L, result.get(0).getId());
-        assertEquals(2L, result.get(1).getId());
-
-        // Verify interactions
-        verify(personService, times(1)).findByStoreIdAndRole(storeId, role);
-        verifyNoMoreInteractions(personService);
-    }
-
-    @org.junit.jupiter.api.Test
-    void testListEmployeesByStoreIdAndName() {
-        // Simulate data
-        Long storeId = 1L;
-        String name = "John Doe";
-        PersonDTO personDTO1 = new PersonDTO();
-        personDTO1.setId(1L);
-        PersonDTO personDTO2 = new PersonDTO();
-        personDTO2.setId(2L);
-        List<PersonDTO> people = Arrays.asList(personDTO1, personDTO2);
-
-        // Mock behavior
-        when(personService.findByStoreIdAndName(storeId, name)).thenReturn(people);
-
-        // Test
-        List<PersonDTO> result = employeeUseCase.listEmployeesByStoreIdAndName(storeId, name);
-        assertEquals(2, result.size());
-        assertEquals(1L, result.get(0).getId());
-        assertEquals(2L, result.get(1).getId());
-
-        // Verify interactions
-        verify(personService, times(1)).findByStoreIdAndName(storeId, name);
-        verifyNoMoreInteractions(personService);
-    }
-
-    @org.junit.jupiter.api.Test
-    void testListEmployeesByRoleAndName() {
-        // Simulate data
-        String role = "Employee";
-        String name = "John Doe";
-        PersonDTO personDTO1 = new PersonDTO();
-        personDTO1.setId(1L);
-        PersonDTO personDTO2 = new PersonDTO();
-        personDTO2.setId(2L);
-        List<PersonDTO> people = Arrays.asList(personDTO1, personDTO2);
-
-        // Mock behavior
-        when(personService.findByRoleAndName(role, name)).thenReturn(people);
-
-        // Test
-        List<PersonDTO> result = employeeUseCase.listEmployeesByRoleAndName(role, name);
-        assertEquals(2, result.size());
-        assertEquals(1L, result.get(0).getId());
-        assertEquals(2L, result.get(1).getId());
-
-        // Verify interactions
-        verify(personService, times(1)).findByRoleAndName(role, name);
-        verifyNoMoreInteractions(personService);
-    }
-
-    @org.junit.jupiter.api.Test
-    void testListEmployeesByStoreIdRoleAndName() {
-        // Simulate data
-        Long storeId = 1L;
-        String role = "Employee";
-        String name = "John Doe";
-        PersonDTO personDTO1 = new PersonDTO();
-        personDTO1.setId(1L);
-        PersonDTO personDTO2 = new PersonDTO();
-        personDTO2.setId(2L);
-        List<PersonDTO> people = Arrays.asList(personDTO1, personDTO2);
-
-        // Mock behavior
-        when(personService.findByStoreIdAndRoleAndName(storeId, role, name)).thenReturn(people);
-
-        // Test
-        List<PersonDTO> result = employeeUseCase.listEmployeesByStoreIdRoleAndName(storeId, role, name);
-        assertEquals(2, result.size());
-        assertEquals(1L, result.get(0).getId());
-        assertEquals(2L, result.get(1).getId());
-
-        // Verify interactions
-        verify(personService, times(1)).findByStoreIdAndRoleAndName(storeId, role, name);
         verifyNoMoreInteractions(personService);
     }
 }

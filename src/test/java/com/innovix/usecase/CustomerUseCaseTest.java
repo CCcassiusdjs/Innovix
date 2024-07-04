@@ -1,10 +1,8 @@
 package com.innovix.usecase;
 
+import com.innovix.entity.PersonType;
 import com.innovix.dto.PersonDTO;
-import com.innovix.entity.Address;
-import com.innovix.entity.PaymentMethod;
-import com.innovix.entity.Person;
-import com.innovix.entity.ShoppingCart;
+import com.innovix.entity.*;
 import com.innovix.service.AddressService;
 import com.innovix.service.OrderService;
 import com.innovix.service.PaymentMethodService;
@@ -142,14 +140,14 @@ class CustomerUseCaseTest {
     void testCreateAddress() {
         // Simulate data
         Address address = new Address();
-        address.setStreet("123 Main St");
+        address.setStreetName("123 Main St");
 
         // Mock behavior
         when(addressService.save(address)).thenReturn(address);
 
         // Test
         Address result = customerUseCase.createAddress(address);
-        assertEquals("123 Main St", result.getStreet());
+        assertEquals("123 Main St", result.getStreetName());
 
         // Verify interactions
         verify(addressService, times(1)).save(address);

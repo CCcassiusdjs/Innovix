@@ -4,6 +4,7 @@ import com.innovix.entity.PaymentMethod;
 import com.innovix.entity.Person;
 import java.util.List;
 
+import com.innovix.entity.PersonType;
 import com.innovix.repository.PaymentMethodRepository;
 import com.innovix.repository.PersonRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -30,20 +31,21 @@ class PaymentMethodRepositoryTest {
 
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
-        person = new Person(1);
-        person.setEmail("john.doe@example.com");
+        person = new Person(1L);
         person.setFullName("John Doe");
-        person.setCpf("123.456.789-00");
-        person.setPassword("password");
-        person.setPhone("123456789");
-        person.setBirthday(LocalDate.of(1990, 1, 1));
-        person.setType(PersonType.USER);
         person = personRepository.save(person);
 
-        PaymentMethod paymentMethod1 = new PaymentMethod(null, "CreditCard", "John Doe", "1234567890123456", LocalDate.of(2025, 12, 31), "123");
-        PaymentMethod paymentMethod2 = new PaymentMethod(null, "DebitCard", "John Doe", "9876543210987654", LocalDate.of(2023, 6, 30), "456");
+        PaymentMethod paymentMethod1 = new PaymentMethod();
+        PaymentMethod paymentMethod2 = new PaymentMethod();
+
         paymentMethod1.setPerson(person);
+        paymentMethod1.setCardNumber("1234567890123456");
+        paymentMethod1.setPaymentType("CreditCard");
+
         paymentMethod2.setPerson(person);
+        paymentMethod2.setCardNumber("9876543210987654");
+        paymentMethod2.setPaymentType("DebitCard");
+
         paymentMethodRepository.save(paymentMethod1);
         paymentMethodRepository.save(paymentMethod2);
     }

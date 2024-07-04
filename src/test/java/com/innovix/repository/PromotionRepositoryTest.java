@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
+@AutoConfigureMockMvc
 public class PromotionRepositoryTest {
 
     @Autowired
@@ -31,9 +33,6 @@ public class PromotionRepositoryTest {
 
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
-        employee = new Person();
-        employee.setName("Jane Smith");
-        employee = personRepository.save(employee);
     }
 
     @org.junit.jupiter.api.Test

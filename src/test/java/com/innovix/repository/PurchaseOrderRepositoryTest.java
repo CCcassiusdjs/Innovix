@@ -44,7 +44,7 @@ public class PurchaseOrderRepositoryTest {
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
         customer = new Person();
-        customer.setName("John Doe");
+        customer.setFullName("John Doe");
         customer = personRepository.save(customer);
 
         address = new Address();
@@ -107,8 +107,8 @@ public class PurchaseOrderRepositoryTest {
     @org.junit.jupiter.api.Test
     void findByProductId() {
         Product product = new Product();
-        product.setProductName("Product A");
-        product.setProductPrice(new BigDecimal("100.00"));
+        product.setName("Product A");
+        product.setId(12L);
         product = productRepository.save(product);
 
         PurchaseOrder order = createSamplePurchaseOrder();

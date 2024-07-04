@@ -25,8 +25,16 @@ public class PersonRepositoryTest {
 
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
-        Person person1 = new Person(null, "john.doe@example.com", "John Doe", "123.456.789-00", "password", "123456789", LocalDate.of(1990, 1, 1), PersonType.USER);
-        Person person2 = new Person(null, "jane.smith@example.com", "Jane Smith", "987.654.321-00", "password", "987654321", LocalDate.of(1985, 5, 5), PersonType.ADMIN);
+        Person person1 = new Person(1L);
+        person1.setType(PersonType.EMPLOYEE);
+        person1.setFullName("John Doe");
+        person1.setEmail("john.doe@example.com");
+
+        Person person2 = new Person(2L);
+        person2.setType(PersonType.CUSTOMER);
+        person2.setFullName("Jane Smith");
+        person2.setEmail("jane.smith@example.com");
+
         personRepository.save(person1);
         personRepository.save(person2);
     }
@@ -51,13 +59,10 @@ public class PersonRepositoryTest {
 
     @org.junit.jupiter.api.Test
     void findByType() {
-        List<Person> users = personRepository.findByType(PersonType.USER);
-        List<Person> admins = personRepository.findByType(PersonType.ADMIN);
+        List<Person> customers = personRepository.findByType(PersonType.CUSTOMER);
+        List<Person> employees = personRepository.findByType(PersonType.EMPLOYEE);
 
-        assertEquals(1, users.size());
-        assertEquals(1, admins.size());
-
-        assertEquals("John Doe", users.get(0).getFullName());
-        assertEquals("Jane Smith", admins.get(0).getFullName());
+        assertEquals(1, customers.size());
+        assertEquals(1, employees.size());
     }
 }

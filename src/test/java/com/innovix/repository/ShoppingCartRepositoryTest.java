@@ -35,8 +35,7 @@ public class ShoppingCartRepositoryTest {
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
         customer = new Person();
-        customer.setName("John Doe");
-
+        customer.setFullName("John Doe");
         customer = personRepository.save(customer);
     }
 
@@ -51,8 +50,8 @@ public class ShoppingCartRepositoryTest {
     void findByCustomer() {
         // Create a shopping cart for the customer
         Product product = new Product();
-        product.setProductName("Product A");
-        product.setProductPrice(10.0);
+        product.setName("Product A");
+        product.setPrice(10.0);
         product = productRepository.save(product);
 
         ShoppingCart cart = new ShoppingCart();

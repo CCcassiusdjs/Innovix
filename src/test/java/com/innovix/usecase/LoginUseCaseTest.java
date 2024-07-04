@@ -1,6 +1,7 @@
 package com.innovix.usecase;
 
 import com.innovix.dto.LoginDTO;
+import com.innovix.dto.PersonDTO;
 import com.innovix.entity.Person;
 import com.innovix.entity.PersonType;
 import com.innovix.service.PersonService;
@@ -42,12 +43,14 @@ class LoginUseCaseTest {
         LoginDTO loginDTO = new LoginDTO("customer@example.com", "password");
         Person customer = new Person();
         customer.setType(PersonType.CUSTOMER);
+        PersonDTO customerDTO = new PersonDTO();
+        customerDTO.setType("CUSTOMER");
 
         // Mock behavior
         when(manager.authenticate(any())).thenReturn(mock(Authentication.class));
         when(manager.authenticate(any())).thenReturn(mock(Authentication.class));
-        when(manager.authenticate(any())).thenReturn(new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword()));
-        when(personService.findByEmail(loginDTO.getEmail())).thenReturn(customer);
+        when(manager.authenticate(any())).thenReturn(new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password()));
+        when(personService.findByEmail(loginDTO.email())).thenReturn(customerDTO);
         when(tokenService.createToken(customer)).thenReturn("generated_token");
 
         // Test
@@ -56,7 +59,7 @@ class LoginUseCaseTest {
         // Verify interactions and assertions
         assertEquals("generated_token", result);
         verify(manager, times(1)).authenticate(any());
-        verify(personService, times(1)).findByEmail(loginDTO.getEmail());
+        verify(personService, times(1)).findByEmail(loginDTO.email());
         verify(tokenService, times(1)).createToken(customer);
         verifyNoMoreInteractions(manager, personService, tokenService);
     }
@@ -67,10 +70,12 @@ class LoginUseCaseTest {
         LoginDTO loginDTO = new LoginDTO("employee@example.com", "password");
         Person employee = new Person();
         employee.setType(PersonType.EMPLOYEE);
+        PersonDTO employeeDTO = new PersonDTO();
+        employeeDTO.setType("EMPLOYEE");
 
         // Mock behavior
         when(manager.authenticate(any())).thenReturn(mock(Authentication.class));
-        when(personService.findByEmail(loginDTO.getEmail())).thenReturn(employee);
+        when(personService.findByEmail(loginDTO.email())).thenReturn(employeeDTO);
         when(tokenService.createToken(employee)).thenReturn("generated_token");
 
         // Test
@@ -79,7 +84,7 @@ class LoginUseCaseTest {
         // Verify interactions and assertions
         assertEquals("generated_token", result);
         verify(manager, times(1)).authenticate(any());
-        verify(personService, times(1)).findByEmail(loginDTO.getEmail());
+        verify(personService, times(1)).findByEmail(loginDTO.email());
         verify(tokenService, times(1)).createToken(employee);
         verifyNoMoreInteractions(manager, personService, tokenService);
     }
@@ -90,10 +95,12 @@ class LoginUseCaseTest {
         LoginDTO loginDTO = new LoginDTO("unknown@example.com", "password");
         Person unknownPerson = new Person();
         unknownPerson.setType(null);
+        PersonDTO unknownPersonDTO = new PersonDTO();
+        unknownPersonDTO.setType(null);
 
         // Mock behavior
         when(manager.authenticate(any())).thenReturn(mock(Authentication.class));
-        when(personService.findByEmail(loginDTO.getEmail())).thenReturn(unknownPerson);
+        when(personService.findByEmail(loginDTO.email())).thenReturn(unknownPersonDTO);
 
         // Test and verify exception
         IllegalStateException exception = assertThrows(IllegalStateException.class, () -> loginUseCase.login(loginDTO));
@@ -101,7 +108,7 @@ class LoginUseCaseTest {
 
         // Verify interactions
         verify(manager, times(1)).authenticate(any());
-        verify(personService, times(1)).findByEmail(loginDTO.getEmail());
+        verify(personService, times(1)).findByEmail(loginDTO.email());
         verifyNoMoreInteractions(manager, personService, tokenService);
     }
 }
