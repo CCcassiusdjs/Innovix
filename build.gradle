@@ -76,6 +76,9 @@ dependencies {
 
     // SnakeYAML
     implementation 'org.yaml:snakeyaml:1.33'
+
+    // H2 Database for testing
+    testImplementation 'com.h2database:h2'
 }
 
 test {
