@@ -56,4 +56,8 @@ public class ShoppingCart {
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
+
+    @Positive
+    @Digits(integer = 10, fraction = 2)
+    private double icms;
 }

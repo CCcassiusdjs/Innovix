@@ -35,14 +35,19 @@ public class SecurityConfigurations {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+                        //Registro de Cliente e Funcionario
+                        .requestMatchers(HttpMethod.POST, "/api/persons/registerCustomer").permitAll()  
+                        .requestMatchers(HttpMethod.POST, "/api/persons/registerEmployee").permitAll()  
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/login/customer").hasAuthority("CUSTOMER")
-                        .requestMatchers(HttpMethod.GET, "/login/employee").hasAuthority("EMPLOYEE")
-                        .requestMatchers(HttpMethod.POST, "/login/registerCustomer").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/login/registerEmployee").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/products").hasAuthority("EMPLOYEE")
-                        .requestMatchers(HttpMethod.POST, "/api/payment-methods").hasAuthority("CUSTOMER")
+                        // Produtos
                         .requestMatchers(HttpMethod.GET, "/api/products").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/products/*").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/products").hasAuthority("EMPLOYEE")
+                        // CEP
+                        // .requestMatchers(HttpMethod.GET, "/api/cep/**").permitAll()
+                        // Shopping Cart
+                        .requestMatchers(HttpMethod.GET, "/api/shopping-carts/**").hasAuthority("CUSTOMER")
+                        .requestMatchers(HttpMethod.POST, "/api/payment-methods").hasAuthority("CUSTOMER")
                         .requestMatchers(HttpMethod.GET, "/api/addresses").hasAnyAuthority("CUSTOMER", "EMPLOYEE")
                         .requestMatchers(HttpMethod.POST, "/api/addresses").hasAuthority("EMPLOYEE")
                         .requestMatchers(HttpMethod.GET, "/api/categories").permitAll()
@@ -54,16 +59,14 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.GET, "/api/payment-methods/**").hasAuthority("CUSTOMER")
                         .requestMatchers(HttpMethod.GET, "/api/promotions").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/promotions").hasAuthority("EMPLOYEE")
-                        .requestMatchers(HttpMethod.GET, "/api/shopping-carts/**").hasAuthority("CUSTOMER")
                         .requestMatchers(HttpMethod.GET, "/api/stores/**").hasAnyAuthority("CUSTOMER", "EMPLOYEE")
                         .requestMatchers(HttpMethod.POST, "/api/stores/**").hasAuthority("EMPLOYEE")
-                        .anyRequest().authenticated()
-                )
+                        .requestMatchers(HttpMethod.GET, "/api/addresses").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/addresses").permitAll()
+                        .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
-
-
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
