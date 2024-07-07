@@ -2,9 +2,6 @@ package com.innovix.dto;
 
 import lombok.Data;
 
-/**
- * Data Transfer Object for the Product entity.
- */
 @Data
 public class ProductDTO {
     private Long productId;

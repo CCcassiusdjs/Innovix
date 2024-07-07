@@ -2,9 +2,6 @@ package com.innovix.dto;
 
 import lombok.Data;
 
-/**
- * Data Transfer Object for the Address entity.
- */
 @Data
 public class AddressDTO {
     private Long addressId;

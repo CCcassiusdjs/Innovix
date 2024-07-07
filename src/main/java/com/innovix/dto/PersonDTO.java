@@ -1,20 +1,35 @@
 package com.innovix.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
-import java.util.Date;
-
-/**
- * Data Transfer Object for the Person entity.
- */
 @Data
 public class PersonDTO {
-    private Long personId;
-    private String name;
-    private Date birthDate;
+
+    private Long id;
+
+    @Email
+    @NotBlank
     private String email;
+
+    @NotBlank
+    private String fullName;
+
+    @NotBlank
+    @Pattern(regexp = "\\d{3}\\.?\\d{3}\\.?\\d{3}\\-?\\d{2}")
     private String cpf;
+
+    @NotBlank
+    private String password;
+
+    @NotBlank
     private String phone;
-    private Date registerDate;
+
+    @NotBlank
+    private String birthday;
+
+    @NotBlank
     private String type;
 }

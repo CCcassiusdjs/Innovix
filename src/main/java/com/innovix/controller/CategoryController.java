@@ -2,8 +2,9 @@ package com.innovix.controller;
 
 import com.innovix.dto.CategoryDTO;
 import com.innovix.mapper.CategoryMapper;
-import com.innovix.usecase.CategoryUseCase;
+import com.innovix.usecase.EmployeeUseCase;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,39 +14,44 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/categories")
 public class CategoryController {
 
-    private final CategoryUseCase categoryUseCase;
+    private final EmployeeUseCase employeeUseCase;
 
     @Autowired
-    public CategoryController(CategoryUseCase categoryUseCase) {
-        this.categoryUseCase = categoryUseCase;
+    public CategoryController(EmployeeUseCase employeeUseCase) {
+        this.employeeUseCase = employeeUseCase;
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('EMPLOYEE')")
     public List<CategoryDTO> listAll() {
-        return categoryUseCase.listAllCategories().stream()
+        return employeeUseCase.listAllCategories().stream()
                 .map(CategoryMapper.INSTANCE::toDto)
                 .collect(Collectors.toList());
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('EMPLOYEE')")
     public CategoryDTO save(@RequestBody CategoryDTO categoryDTO) {
         return CategoryMapper.INSTANCE.toDto(
-                categoryUseCase.createCategory(CategoryMapper.INSTANCE.toEntity(categoryDTO))
+                employeeUseCase.createCategory(CategoryMapper.INSTANCE.toEntity(categoryDTO))
         );
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('EMPLOYEE')")
     public CategoryDTO getById(@PathVariable Long id) {
-        return CategoryMapper.INSTANCE.toDto(categoryUseCase.getCategoryById(id));
+        return CategoryMapper.INSTANCE.toDto(employeeUseCase.getCategoryById(id));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('EMPLOYEE')")
     public void delete(@PathVariable Long id) {
-        categoryUseCase.deleteCategory(id);
+        employeeUseCase.deleteCategory(id);
     }
 
-    @GetMapping("/{name}")
+    @GetMapping("/name/{name}")
+    @PreAuthorize("hasAuthority('EMPLOYEE')")
     public CategoryDTO getByName(@PathVariable String name) {
-        return CategoryMapper.INSTANCE.toDto(categoryUseCase.getCategoryByName(name));
+        return CategoryMapper.INSTANCE.toDto(employeeUseCase.getCategoryByName(name));
     }
 }
