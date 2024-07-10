@@ -37,7 +37,7 @@ public class PersonDTO {
      * </p>
      */
     @NotBlank(message = "Full name cannot be blank")
-    private String fullName;
+    private String name;
 
     /**
      * The CPF (Cadastro de Pessoas Físicas) of the person.
@@ -73,8 +73,8 @@ public class PersonDTO {
      * This field is mandatory.
      * </p>
      */
-    @NotBlank(message = "Birthday cannot be blank")
-    private String birthday;
+    @NotBlank(message = "Birthdate cannot be blank")
+    private String birthdate;
 
     /**
      * The type of the person (CUSTOMER or EMPLOYEE).
