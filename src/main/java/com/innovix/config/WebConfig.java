@@ -17,7 +17,7 @@ public class WebConfig {
                 // Adiciona mapeamentos CORS para todos os caminhos (/**)
                 registry.addMapping("/**")
                         // Permite origens específicas (http://localhost:3000)
-                        .allowedOrigins("http://localhost:3000")
+                        .allowedOrigins("http://localhost:8080")
                         // Permite métodos HTTP específicos
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         // Permite todos os cabeçalhos

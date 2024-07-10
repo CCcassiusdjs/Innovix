@@ -14,4 +14,5 @@ public class ShoppingCartDTO {
     private double productSubtotal;
     private double subtotal;
     private Long productId;
+    private double icms;
 }
