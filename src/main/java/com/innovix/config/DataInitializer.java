@@ -72,8 +72,8 @@ public class DataInitializer {
 
     void createCategories() {
         List<Category> categories = new ArrayList<>();
-        String[] categoryNames = { "Eletrônicos", "Livros", "Roupas", "Alimentos", "Móveis", "Brinquedos", "Esportes",
-                "Saúde", "Beleza", "Automotivo" };
+        String[] categoryNames = {"Eletrônicos", "Livros", "Roupas", "Alimentos", "Móveis", "Brinquedos", "Esportes",
+                "Saúde", "Beleza", "Automotivo"};
         for (String categoryName : categoryNames) {
             Optional<Category> existingCategory = Optional.ofNullable(categoryRepository.findByName(categoryName));
             if (existingCategory.isEmpty()) {
@@ -99,6 +99,15 @@ public class DataInitializer {
             person.setType(PersonType.values()[random.nextInt(PersonType.values().length)]);
             persons.add(person);
         }
+        Person testUser = new Person();
+        testUser.setEmail("test@test.com");
+        testUser.setFullName("Test User");
+        testUser.setCpf(faker.regexify("\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}"));
+        testUser.setPassword(passwordEncoder.encode("test")); // Encrypting password
+        testUser.setPhone(faker.phoneNumber().cellPhone());
+        testUser.setBirthday(faker.date().birthday().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate());
+        testUser.setType(PersonType.EMPLOYEE);
+        persons.add(testUser);
         personRepository.saveAll(persons);
     }
 
