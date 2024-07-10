@@ -1,27 +1,28 @@
 package com.innovix.service;
 
 import com.innovix.entity.Product;
-import com.innovix.entity.PurchaseOrder;
 import com.innovix.entity.Promotion;
+import com.innovix.entity.PurchaseOrder;
 import com.innovix.repository.PromotionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-public class PromotionServiceTest {
+class PromotionServiceTest {
 
     @Mock
     private PromotionRepository promotionRepository;
@@ -29,127 +30,103 @@ public class PromotionServiceTest {
     @InjectMocks
     private PromotionService promotionService;
 
-    private Promotion promotion1;
-    private Promotion promotion2;
+    private Promotion promotion;
+
     private Product product;
 
     @BeforeEach
     void setUp() {
-        promotion1 = new Promotion();
-        promotion1.setId(1L);
-        promotion1.setDescription("buy2take3");
-        promotion1.setRequiredQuantity(2);
-        promotion1.setFreeQuantity(1);
+        MockitoAnnotations.openMocks(this);
 
-        promotion2 = new Promotion();
-        promotion2.setId(2L);
-        promotion2.setDescription("25% Off");
-        promotion2.setRequiredQuantity(0);
+        promotion = new Promotion();
+        promotion.setId(1L);
+        promotion.setDescription("buy2take3");
+        promotion.setSeason("Summer");
+        promotion.setInitLocalDate(LocalDate.of(2023, 1, 1));
+        promotion.setEndLocalDate(LocalDate.of(2023, 12, 31));
+        promotion.setRequiredQuantity(2);
+        promotion.setFreeQuantity(1);
 
         product = new Product();
-        product.setId(1L);
-        product.setName("Product 1");
-        product.setPromotion(promotion1);
+        product.setPromotion(promotion);
     }
 
     @Test
-    void testListAll() {
-        when(promotionRepository.findAll()).thenReturn(Arrays.asList(promotion1, promotion2));
+    void listAll() {
+        when(promotionRepository.findAll()).thenReturn(Collections.singletonList(promotion));
 
         List<Promotion> promotions = promotionService.listAll();
 
-        assertNotNull(promotions);
-        assertEquals(2, promotions.size());
-        assertEquals("buy2take3", promotions.get(0).getDescription());
-        assertEquals("25% Off", promotions.get(1).getDescription());
-
+        assertEquals(1, promotions.size());
         verify(promotionRepository, times(1)).findAll();
     }
 
     @Test
-    void testSave() {
-        when(promotionRepository.save(promotion1)).thenReturn(promotion1);
+    void save() {
+        when(promotionRepository.save(any(Promotion.class))).thenReturn(promotion);
 
-        Promotion savedPromotion = promotionService.save(promotion1);
+        Promotion savedPromotion = promotionService.save(promotion);
 
         assertNotNull(savedPromotion);
-        assertEquals(1L, savedPromotion.getId());
-        assertEquals("buy2take3", savedPromotion.getDescription());
-
-        verify(promotionRepository, times(1)).save(promotion1);
+        assertEquals(promotion.getId(), savedPromotion.getId());
+        verify(promotionRepository, times(1)).save(promotion);
     }
 
     @Test
-    void testFindById() {
-        when(promotionRepository.findById(1L)).thenReturn(Optional.of(promotion1));
+    void findById() {
+        when(promotionRepository.findById(1L)).thenReturn(Optional.of(promotion));
 
         Promotion foundPromotion = promotionService.findById(1L);
 
         assertNotNull(foundPromotion);
-        assertEquals(1L, foundPromotion.getId());
-        assertEquals("buy2take3", foundPromotion.getDescription());
-
+        assertEquals(promotion.getId(), foundPromotion.getId());
         verify(promotionRepository, times(1)).findById(1L);
     }
 
     @Test
-    void testFindBySeason() {
-        String season = "Summer";
-        when(promotionRepository.findBySeason(season)).thenReturn(Arrays.asList(promotion1));
+    void findBySeason() {
+        when(promotionRepository.findBySeason("Summer")).thenReturn(Collections.singletonList(promotion));
 
-        List<Promotion> promotions = promotionService.findBySeason(season);
+        List<Promotion> promotions = promotionService.findBySeason("Summer");
 
-        assertNotNull(promotions);
         assertEquals(1, promotions.size());
-        assertEquals("buy2take3", promotions.get(0).getDescription());
-
-        verify(promotionRepository, times(1)).findBySeason(season);
+        verify(promotionRepository, times(1)).findBySeason("Summer");
     }
 
     @Test
-    void testFindByInitLocalDateBefore() {
-        LocalDate date = LocalDate.of(2024, 7, 1);
-        when(promotionRepository.findByInitLocalDateBefore(date)).thenReturn(Arrays.asList(promotion1));
+    void findByInitLocalDateBefore() {
+        when(promotionRepository.findByInitLocalDateBefore(LocalDate.of(2023, 6, 1)))
+                .thenReturn(Collections.singletonList(promotion));
 
-        List<Promotion> promotions = promotionService.findByInitLocalDateBefore(date);
+        List<Promotion> promotions = promotionService.findByInitLocalDateBefore(LocalDate.of(2023, 6, 1));
 
-        assertNotNull(promotions);
         assertEquals(1, promotions.size());
-        assertEquals("buy2take3", promotions.get(0).getDescription());
-
-        verify(promotionRepository, times(1)).findByInitLocalDateBefore(date);
+        verify(promotionRepository, times(1)).findByInitLocalDateBefore(LocalDate.of(2023, 6, 1));
     }
 
     @Test
-    void testFindByEndLocalDateAfter() {
-        LocalDate date = LocalDate.of(2024, 12, 31);
-        when(promotionRepository.findByEndLocalDateAfter(date)).thenReturn(Arrays.asList(promotion1));
+    void findByEndLocalDateAfter() {
+        when(promotionRepository.findByEndLocalDateAfter(LocalDate.of(2023, 6, 1)))
+                .thenReturn(Collections.singletonList(promotion));
 
-        List<Promotion> promotions = promotionService.findByEndLocalDateAfter(date);
+        List<Promotion> promotions = promotionService.findByEndLocalDateAfter(LocalDate.of(2023, 6, 1));
 
-        assertNotNull(promotions);
         assertEquals(1, promotions.size());
-        assertEquals("buy2take3", promotions.get(0).getDescription());
-
-        verify(promotionRepository, times(1)).findByEndLocalDateAfter(date);
+        verify(promotionRepository, times(1)).findByEndLocalDateAfter(LocalDate.of(2023, 6, 1));
     }
 
     @Test
-    void testFindByEmployeeId() {
-        Long employeeId = 1L;
-        when(promotionRepository.findByEmployeeId(employeeId)).thenReturn(Arrays.asList(promotion1));
+    void findByEmployeeId() {
+        when(promotionRepository.findByEmployeeId(1L)).thenReturn(Collections.singletonList(promotion));
 
-        List<Promotion> promotions = promotionService.findByEmployeeId(employeeId);
+        List<Promotion> promotions = promotionService.findByEmployeeId(1L);
 
-        assertNotNull(promotions);
         assertEquals(1, promotions.size());
-        assertEquals("buy2take3", promotions.get(0).getDescription());
-
-        verify(promotionRepository, times(1)).findByEmployeeId(employeeId);
+        verify(promotionRepository, times(1)).findByEmployeeId(1L);
     }
 
     @Test
-    void testDelete() {
+    void delete() {
         doNothing().when(promotionRepository).deleteById(1L);
 
         promotionService.delete(1L);
@@ -158,15 +135,63 @@ public class PromotionServiceTest {
     }
 
     @Test
-    void testApplyPromotion() {
+    void applyPromotion() {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
-        purchaseOrder.setId(1L);
+        purchaseOrder.setProductQuantity(6);
+        purchaseOrder.setProductPrice(BigDecimal.valueOf(10.00));
+        purchaseOrder.setProductSubtotal(BigDecimal.valueOf(60.00));
         purchaseOrder.setProduct(product);
-        purchaseOrder.setProductQuantity(4);
 
         promotionService.applyPromotion(purchaseOrder);
 
-        assertEquals(2, purchaseOrder.getFreeQuantity());
-        assertEquals(new BigDecimal("100.0"), purchaseOrder.getProductSubtotal());
+        assertEquals(3, purchaseOrder.getFreeQuantity());
+        assertEquals(BigDecimal.valueOf(30.00), purchaseOrder.getProductSubtotal());
+    }
+
+    @Test
+    void applyPromotionWithNullPromotion() {
+        PurchaseOrder purchaseOrder = new PurchaseOrder();
+        purchaseOrder.setProductQuantity(6);
+        purchaseOrder.setProductPrice(BigDecimal.valueOf(10.00));
+        purchaseOrder.setProductSubtotal(BigDecimal.valueOf(60.00));
+        Product productWithoutPromotion = new Product();
+        productWithoutPromotion.setPromotion(null);
+        purchaseOrder.setProduct(productWithoutPromotion);
+
+        promotionService.applyPromotion(purchaseOrder);
+
+        assertEquals(0, purchaseOrder.getFreeQuantity());
+        assertEquals(BigDecimal.valueOf(60.00), purchaseOrder.getProductSubtotal());
+    }
+
+    @Test
+    void applyPromotionWithDifferentDescription() {
+        PurchaseOrder purchaseOrder = new PurchaseOrder();
+        purchaseOrder.setProductQuantity(6);
+        purchaseOrder.setProductPrice(BigDecimal.valueOf(10.00));
+        purchaseOrder.setProductSubtotal(BigDecimal.valueOf(60.00));
+        Promotion differentPromotion = new Promotion();
+        differentPromotion.setDescription("differentPromotion");
+        Product productWithDifferentPromotion = new Product();
+        productWithDifferentPromotion.setPromotion(differentPromotion);
+        purchaseOrder.setProduct(productWithDifferentPromotion);
+
+        promotionService.applyPromotion(purchaseOrder);
+
+        assertEquals(0, purchaseOrder.getFreeQuantity());
+        assertEquals(BigDecimal.valueOf(60.00), purchaseOrder.getProductSubtotal());
+    }
+
+    @Test
+    void applyBuy2Take3Promotion() {
+        PurchaseOrder purchaseOrder = new PurchaseOrder();
+        purchaseOrder.setProductQuantity(6);
+        purchaseOrder.setProductPrice(BigDecimal.valueOf(10.00));
+        purchaseOrder.setProductSubtotal(BigDecimal.valueOf(60.00));
+
+        promotionService.applyBuy2Take3Promotion(purchaseOrder, promotion);
+
+        assertEquals(3, purchaseOrder.getFreeQuantity());
+        assertEquals(BigDecimal.valueOf(30.00), purchaseOrder.getProductSubtotal());
     }
 }

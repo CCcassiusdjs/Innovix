@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
@@ -46,6 +47,8 @@ class ProductControllerTest {
     private Product createProduct() {
         Product product = new Product();
         product.setId(1L);
+        product.setName("Sample Product");
+        product.setDescription("Sample Description");
         // Add more fields as necessary
         return product;
     }
@@ -53,6 +56,8 @@ class ProductControllerTest {
     private ProductDTO createProductDTO() {
         ProductDTO productDTO = new ProductDTO();
         productDTO.setProductId(1L);
+        productDTO.setName("Sample Product");
+        productDTO.setDescription("Sample Description");
         // Add more fields as necessary
         return productDTO;
     }
@@ -84,7 +89,7 @@ class ProductControllerTest {
 
         mockMvc.perform(post("/api/products")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"productId\": 1}")) // Add more fields as necessary
+                        .content("{\"productId\": 1, \"name\": \"Sample Product\", \"description\": \"Sample Description\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.productId").value(1L));
     }

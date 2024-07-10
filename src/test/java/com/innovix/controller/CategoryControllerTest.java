@@ -12,7 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ActiveProfiles; // <-- Ensure this import is present
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
@@ -27,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 class CategoryControllerTest {
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -90,5 +91,12 @@ class CategoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.name").value("Test Category"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "EMPLOYEE")
+    void deleteCategory() throws Exception {
+        mockMvc.perform(delete("/api/categories/1"))
+                .andExpect(status().isOk());
     }
 }

@@ -24,7 +24,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Collections;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -100,6 +99,28 @@ class PersonControllerTest {
 
     @Test
     @WithMockUser
+    void createAddressForbidden() throws Exception {
+        AddressDTO addressDTO = new AddressDTO();
+        addressDTO.setPersonId(1L);
+
+        when(userDetails.getUsername()).thenReturn("test@example.com");
+        PersonDTO customerDTO = new PersonDTO();
+        customerDTO.setId(2L); // Different ID to simulate forbidden access
+        customerDTO.setType("CUSTOMER");
+        when(customerUseCase.getCustomerByEmail(any())).thenReturn(customerDTO);
+
+        SecurityContextHolder.setContext(new SecurityContextImpl());
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(userDetails, null));
+
+        mockMvc.perform(post("/api/persons/1/addresses")
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"street\":\"Test Street\"}"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser
     void listOrdersByCustomer() throws Exception {
         when(userDetails.getUsername()).thenReturn("test@example.com");
         PersonDTO customerDTO = new PersonDTO();
@@ -114,6 +135,22 @@ class PersonControllerTest {
         mockMvc.perform(get("/api/persons/customer-orders/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)));
+    }
+
+    @Test
+    @WithMockUser
+    void listOrdersByCustomerForbidden() throws Exception {
+        when(userDetails.getUsername()).thenReturn("test@example.com");
+        PersonDTO customerDTO = new PersonDTO();
+        customerDTO.setId(2L); // Different ID to simulate forbidden access
+        customerDTO.setType("CUSTOMER");
+        when(customerUseCase.getCustomerByEmail(any())).thenReturn(customerDTO);
+
+        SecurityContextHolder.setContext(new SecurityContextImpl());
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(userDetails, null));
+
+        mockMvc.perform(get("/api/persons/customer-orders/1"))
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -147,6 +184,23 @@ class PersonControllerTest {
     }
 
     @Test
+    @WithMockUser(authorities = "EMPLOYEE")
+    void deleteEmployeeForbidden() throws Exception {
+        when(userDetails.getUsername()).thenReturn("test@example.com");
+        PersonDTO loggedInUser = new PersonDTO();
+        loggedInUser.setId(1L); // Same ID to simulate forbidden access
+        loggedInUser.setType("EMPLOYEE");
+        when(employeeUseCase.getEmployeeByEmail(any())).thenReturn(loggedInUser);
+
+        SecurityContextHolder.setContext(new SecurityContextImpl());
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(userDetails, null));
+
+        mockMvc.perform(delete("/api/persons/employee/1")
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     @WithMockUser
     void deleteCustomer() throws Exception {
         when(userDetails.getUsername()).thenReturn("test@example.com");
@@ -164,6 +218,23 @@ class PersonControllerTest {
     }
 
     @Test
+    @WithMockUser
+    void deleteCustomerForbidden() throws Exception {
+        when(userDetails.getUsername()).thenReturn("test@example.com");
+        PersonDTO loggedInUser = new PersonDTO();
+        loggedInUser.setId(2L); // Different ID to simulate forbidden access
+        loggedInUser.setType("CUSTOMER");
+        when(customerUseCase.getCustomerByEmail(any())).thenReturn(loggedInUser);
+
+        SecurityContextHolder.setContext(new SecurityContextImpl());
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(userDetails, null));
+
+        mockMvc.perform(delete("/api/persons/customer/1")
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     void registerCustomer() throws Exception {
         when(customerUseCase.userExists(any())).thenReturn(false);
 
@@ -173,6 +244,18 @@ class PersonControllerTest {
                         .content("{\"email\":\"test@example.com\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(content().string("Customer registered successfully"));
+    }
+
+    @Test
+    void registerCustomerConflict() throws Exception {
+        when(customerUseCase.userExists(any())).thenReturn(true);
+
+        mockMvc.perform(post("/api/persons/registerCustomer")
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"test@example.com\"}"))
+                .andExpect(status().isConflict())
+                .andExpect(content().string("User with this email already exists"));
     }
 
     @Test
@@ -187,4 +270,18 @@ class PersonControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().string("Employee registered successfully"));
     }
+
+    @Test
+    @WithMockUser(authorities = "EMPLOYEE")
+    void registerEmployeeConflict() throws Exception {
+        when(employeeUseCase.userExists(any())).thenReturn(true);
+
+        mockMvc.perform(post("/api/persons/registerEmployee")
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"test@example.com\"}"))
+                .andExpect(status().isConflict())
+                .andExpect(content().string("User with this email already exists"));
+    }
+
 }

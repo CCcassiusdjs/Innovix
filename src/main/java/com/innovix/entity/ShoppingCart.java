@@ -53,6 +53,12 @@ public class ShoppingCart {
     @Column(nullable = false)
     private double subtotal;
 
+    /**
+     * The product associated with the shopping cart.
+     * <p>
+     * This field is mandatory and defines a many-to-one relationship with the Product entity.
+     * </p>
+     */
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;

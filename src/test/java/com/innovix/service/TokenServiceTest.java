@@ -1,69 +1,111 @@
 package com.innovix.service;
 
-import com.innovix.entity.Person;
-import com.innovix.entity.PersonType; // Assuming PersonType enum is defined
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTCreator;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.innovix.entity.Person;
+import com.innovix.entity.PersonType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-public class TokenServiceTest {
-
-    @Mock
-    private Algorithm algorithm;
-
-    @Value("${api.security.token.secret}")
-    private String secret;
+class TokenServiceTest {
 
     @InjectMocks
     private TokenService tokenService;
 
     private Person user;
+    private static final String SECRET = "secret";
+    private static final String VALID_TOKEN = "valid.token";
+    private static final String INVALID_TOKEN = "invalid.token";
 
     @BeforeEach
     void setUp() {
+        tokenService = new TokenService();
+        ReflectionTestUtils.setField(tokenService, "secret", SECRET);
+
         user = new Person();
-        user.setEmail("test@example.com");
-        user.setType(PersonType.CUSTOMER);
+        user.setEmail("user@example.com");
+        user.setType(PersonType.EMPLOYEE);
     }
 
     @Test
-    void testCreateToken() {
-        try {
-            String mockedToken = "mockedToken";
-            when(algorithm.sign(any())).thenAnswer(invocation -> mockedToken);
+    void createToken_Success() {
+        try (MockedStatic<Algorithm> algorithmMockedStatic = Mockito.mockStatic(Algorithm.class);
+             MockedStatic<JWT> jwtMockedStatic = Mockito.mockStatic(JWT.class)) {
+
+            var algorithm = Mockito.mock(Algorithm.class);
+            algorithmMockedStatic.when(() -> Algorithm.HMAC256(SECRET)).thenReturn(algorithm);
+
+            var jwtBuilder = Mockito.mock(JWTCreator.Builder.class);
+
+            jwtMockedStatic.when(JWT::create).thenReturn(jwtBuilder);
+            Mockito.when(jwtBuilder.withIssuer("API innovix")).thenReturn(jwtBuilder);
+            Mockito.when(jwtBuilder.withSubject(user.getEmail())).thenReturn(jwtBuilder);
+            Mockito.when(jwtBuilder.withClaim("USER_TYPE", user.getType().getValue())).thenReturn(jwtBuilder);
+            Mockito.when(jwtBuilder.sign(algorithm)).thenReturn(VALID_TOKEN);
 
             String token = tokenService.createToken(user);
-
-            assertNotNull(token);
-            assertTrue(token.startsWith(mockedToken));
-        } catch (JWTCreationException exception) {
-            fail("Exception should not be thrown");
+            assertEquals(VALID_TOKEN, token);
         }
     }
 
     @Test
-    void testCreateTokenException() {
-        try {
-            when(algorithm.sign(any())).thenThrow(new JWTCreationException("Failed to create token", new Throwable()));
+    void createToken_Failure() {
+        try (MockedStatic<Algorithm> algorithmMockedStatic = Mockito.mockStatic(Algorithm.class)) {
+            algorithmMockedStatic.when(() -> Algorithm.HMAC256(SECRET)).thenThrow(JWTCreationException.class);
 
-            assertThrows(RuntimeException.class, () -> {
-                tokenService.createToken(user);
-            });
-        } catch (JWTCreationException exception) {
-            fail("Unexpected JWTCreationException");
+            assertThrows(RuntimeException.class, () -> tokenService.createToken(user));
+        }
+    }
+
+    @Test
+    void getSubject_Success() {
+        try (MockedStatic<Algorithm> algorithmMockedStatic = Mockito.mockStatic(Algorithm.class);
+             MockedStatic<JWT> jwtMockedStatic = Mockito.mockStatic(JWT.class)) {
+
+            var algorithm = Mockito.mock(Algorithm.class);
+            var verifierBuilder = Mockito.mock(JWTVerifier.BaseVerification.class);
+            var verifier = Mockito.mock(JWTVerifier.class);
+            var decodedJWT = Mockito.mock(DecodedJWT.class);
+
+            algorithmMockedStatic.when(() -> Algorithm.HMAC256(SECRET)).thenReturn(algorithm);
+            jwtMockedStatic.when(() -> JWT.require(algorithm)).thenReturn(verifierBuilder);
+            Mockito.when(verifierBuilder.withIssuer("API innovix")).thenReturn(verifierBuilder);
+            Mockito.when(verifierBuilder.build()).thenReturn(verifier);
+            Mockito.when(verifier.verify(VALID_TOKEN)).thenReturn(decodedJWT);
+            Mockito.when(decodedJWT.getSubject()).thenReturn(user.getEmail());
+
+            String subject = tokenService.getSubject(VALID_TOKEN);
+            assertEquals(user.getEmail(), subject);
+        }
+    }
+
+    @Test
+    void getSubject_Failure() {
+        try (MockedStatic<Algorithm> algorithmMockedStatic = Mockito.mockStatic(Algorithm.class);
+             MockedStatic<JWT> jwtMockedStatic = Mockito.mockStatic(JWT.class)) {
+
+            var algorithm = Mockito.mock(Algorithm.class);
+            var verifierBuilder = Mockito.mock(JWTVerifier.BaseVerification.class);
+            var verifier = Mockito.mock(JWTVerifier.class);
+
+            algorithmMockedStatic.when(() -> Algorithm.HMAC256(SECRET)).thenReturn(algorithm);
+            jwtMockedStatic.when(() -> JWT.require(algorithm)).thenReturn(verifierBuilder);
+            Mockito.when(verifierBuilder.withIssuer("API innovix")).thenReturn(verifierBuilder);
+            Mockito.when(verifierBuilder.build()).thenReturn(verifier);
+            Mockito.when(verifier.verify(INVALID_TOKEN)).thenThrow(JWTVerificationException.class);
+
+            assertThrows(RuntimeException.class, () -> tokenService.getSubject(INVALID_TOKEN));
         }
     }
 }

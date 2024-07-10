@@ -48,4 +48,25 @@ class LoginControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.token").value("mocked-token"));
     }
+
+    @Test
+    void loginWithoutEmail() throws Exception {
+        LoginDTO loginDTO = new LoginDTO("", "password");
+
+        mockMvc.perform(post("/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void loginWithoutPassword() throws Exception {
+        LoginDTO loginDTO = new LoginDTO("user@example.com", "");
+
+        mockMvc.perform(post("/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
 }

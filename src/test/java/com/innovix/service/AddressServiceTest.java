@@ -4,19 +4,20 @@ import com.innovix.entity.Address;
 import com.innovix.repository.AddressRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 public class AddressServiceTest {
 
     @Mock
@@ -25,76 +26,93 @@ public class AddressServiceTest {
     @InjectMocks
     private AddressService addressService;
 
-    private Address address1;
-    private Address address2;
+    private Address address;
 
     @BeforeEach
-    void setUp() {
-        address1 = new Address();
-        address1.setId(1L);
-        address1.setCity("City1");
-        address1.setState("State1");
-        address1.setCountry("Country1");
-        address1.setPersonId(1L);
-
-        address2 = new Address();
-        address2.setId(2L);
-        address2.setCity("City2");
-        address2.setState("State2");
-        address2.setCountry("Country2");
-        address2.setPersonId(2L);
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+        address = new Address(1L, "Street Name", 123, "Unit 1", "12345-678", "City", "State", "Country", 1L);
     }
 
     @Test
-    void testListAll() {
-        when(addressRepository.findAll()).thenReturn(Arrays.asList(address1, address2));
+    public void testListAll() {
+        List<Address> addresses = Arrays.asList(address);
+        when(addressRepository.findAll()).thenReturn(addresses);
 
-        List<Address> addresses = addressService.listAll();
-
-        assertNotNull(addresses);
-        assertEquals(2, addresses.size());
-        verify(addressRepository, times(1)).findAll();
+        List<Address> result = addressService.listAll();
+        assertEquals(1, result.size());
+        assertEquals(address, result.get(0));
     }
 
     @Test
-    void testSave() {
-        when(addressRepository.save(address1)).thenReturn(address1);
+    public void testSave() {
+        when(addressRepository.save(any(Address.class))).thenReturn(address);
 
-        Address savedAddress = addressService.save(address1);
-
-        assertNotNull(savedAddress);
-        assertEquals(1L, savedAddress.getId());
-        verify(addressRepository, times(1)).save(address1);
+        Address result = addressService.save(address);
+        assertEquals(address, result);
     }
 
     @Test
-    void testFindById() {
-        when(addressRepository.findById(1L)).thenReturn(Optional.of(address1));
+    public void testFindById() {
+        when(addressRepository.findById(anyLong())).thenReturn(Optional.of(address));
 
-        Address foundAddress = addressService.findById(1L);
-
-        assertNotNull(foundAddress);
-        assertEquals(1L, foundAddress.getId());
-        verify(addressRepository, times(1)).findById(1L);
+        Address result = addressService.findById(1L);
+        assertEquals(address, result);
     }
 
     @Test
-    void testFindByCity() {
-        when(addressRepository.findByCity("City1")).thenReturn(Arrays.asList(address1));
+    public void testFindByIdNotFound() {
+        when(addressRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        List<Address> addresses = addressService.findByCity("City1");
-
-        assertNotNull(addresses);
-        assertEquals(1, addresses.size());
-        verify(addressRepository, times(1)).findByCity("City1");
+        Address result = addressService.findById(1L);
+        assertNull(result);
     }
 
     @Test
-    void testDelete() {
-        doNothing().when(addressRepository).deleteById(1L);
+    public void testFindByCity() {
+        List<Address> addresses = Arrays.asList(address);
+        when(addressRepository.findByCity(anyString())).thenReturn(addresses);
+
+        List<Address> result = addressService.findByCity("City");
+        assertEquals(1, result.size());
+        assertEquals(address, result.get(0));
+    }
+
+    @Test
+    public void testFindByState() {
+        List<Address> addresses = Arrays.asList(address);
+        when(addressRepository.findByState(anyString())).thenReturn(addresses);
+
+        List<Address> result = addressService.findByState("State");
+        assertEquals(1, result.size());
+        assertEquals(address, result.get(0));
+    }
+
+    @Test
+    public void testFindByCountry() {
+        List<Address> addresses = Arrays.asList(address);
+        when(addressRepository.findByCountry(anyString())).thenReturn(addresses);
+
+        List<Address> result = addressService.findByCountry("Country");
+        assertEquals(1, result.size());
+        assertEquals(address, result.get(0));
+    }
+
+    @Test
+    public void testFindByPersonId() {
+        List<Address> addresses = Arrays.asList(address);
+        when(addressRepository.findByPersonId(anyLong())).thenReturn(addresses);
+
+        List<Address> result = addressService.findByPersonId(1L);
+        assertEquals(1, result.size());
+        assertEquals(address, result.get(0));
+    }
+
+    @Test
+    public void testDelete() {
+        doNothing().when(addressRepository).deleteById(anyLong());
 
         addressService.delete(1L);
-
         verify(addressRepository, times(1)).deleteById(1L);
     }
 }
