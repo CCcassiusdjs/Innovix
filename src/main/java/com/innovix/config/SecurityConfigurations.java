@@ -44,7 +44,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.GET, "/api/products/*").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/products").hasAuthority("EMPLOYEE")
                         // CEP
-                        // .requestMatchers(HttpMethod.GET, "/api/cep/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/cep/**").permitAll()
                         // Shopping Cart
                         .requestMatchers(HttpMethod.GET, "/api/shopping-carts/**").hasAuthority("CUSTOMER")
                         .requestMatchers(HttpMethod.POST, "/api/payment-methods").hasAuthority("CUSTOMER")
