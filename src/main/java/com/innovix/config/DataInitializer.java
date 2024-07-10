@@ -31,6 +31,7 @@ public class DataInitializer {
     private final PurchaseOrderRepository purchaseOrderRepository;
     private final ShoppingCartRepository shoppingCartRepository;
     private final StoreRepository storeRepository;
+    private final IcmsRepository icmsRepository;
     private final Faker faker;
     private final Random random;
     private final PasswordEncoder passwordEncoder;
@@ -40,7 +41,7 @@ public class DataInitializer {
                            PaymentMethodRepository paymentMethodRepository, PersonRepository personRepository,
                            ProductRepository productRepository, PromotionRepository promotionRepository,
                            PurchaseOrderRepository purchaseOrderRepository, ShoppingCartRepository shoppingCartRepository,
-                           StoreRepository storeRepository, PasswordEncoder passwordEncoder) {
+                           StoreRepository storeRepository, IcmsRepository icmsRepository, PasswordEncoder passwordEncoder) {
         this.addressRepository = addressRepository;
         this.categoryRepository = categoryRepository;
         this.paymentMethodRepository = paymentMethodRepository;
@@ -50,6 +51,7 @@ public class DataInitializer {
         this.purchaseOrderRepository = purchaseOrderRepository;
         this.shoppingCartRepository = shoppingCartRepository;
         this.storeRepository = storeRepository;
+        this.icmsRepository = icmsRepository;
         this.faker = new Faker(new Locale("pt-BR")); // Gera dados em português
         this.random = new Random();
         this.passwordEncoder = passwordEncoder;
@@ -70,7 +72,8 @@ public class DataInitializer {
 
     void createCategories() {
         List<Category> categories = new ArrayList<>();
-        String[] categoryNames = {"Eletrônicos", "Livros", "Roupas", "Alimentos", "Móveis", "Brinquedos", "Esportes", "Saúde", "Beleza", "Automotivo"};
+        String[] categoryNames = { "Eletrônicos", "Livros", "Roupas", "Alimentos", "Móveis", "Brinquedos", "Esportes",
+                "Saúde", "Beleza", "Automotivo" };
         for (String categoryName : categoryNames) {
             Optional<Category> existingCategory = Optional.ofNullable(categoryRepository.findByName(categoryName));
             if (existingCategory.isEmpty()) {
@@ -91,7 +94,8 @@ public class DataInitializer {
             person.setCpf(faker.regexify("\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}"));
             person.setPassword(passwordEncoder.encode(faker.internet().password())); // Encrypting password
             person.setPhone(faker.phoneNumber().cellPhone());
-            person.setBirthday(faker.date().birthday().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate());
+            person.setBirthday(
+                    faker.date().birthday().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate());
             person.setType(PersonType.values()[random.nextInt(PersonType.values().length)]);
             persons.add(person);
         }
@@ -250,6 +254,8 @@ public class DataInitializer {
             for (int i = 0; i < 5; i++) { // Creating 5 shopping carts per customer
                 Product product = products.get(random.nextInt(products.size()));
                 ShoppingCart cart = new ShoppingCart();
+                List<Address> addresses = addressRepository.findByPersonId(customer.getId());
+                Address address = addresses.get(0);
                 cart.setCustomer(customer);
                 cart.setProductImage(product.getImages()); // Using the product image URL
                 cart.setProductName(product.getName());
@@ -257,7 +263,8 @@ public class DataInitializer {
                 cart.setProductPrice(product.getPrice());
                 cart.setProductQuantity(faker.number().numberBetween(1, 5));
                 cart.setProductSubtotal(cart.getProductPrice() * cart.getProductQuantity());
-                cart.setSubtotal(cart.getProductSubtotal());
+                cart.setIcms(icmsRepository.getIcmsValue(cart.getProductSubtotal(), address.getState()));
+                cart.setSubtotal(cart.getProductSubtotal() + cart.getIcms());
                 cart.setProduct(product);
                 shoppingCarts.add(cart);
             }
@@ -284,7 +291,8 @@ public class DataInitializer {
                 order.setProductDescription(product.getDescription());
                 order.setProductPrice(BigDecimal.valueOf(product.getPrice()));
                 order.setProductQuantity(faker.number().numberBetween(1, 5));
-                order.setProductSubtotal(order.getProductPrice().multiply(BigDecimal.valueOf(order.getProductQuantity())));
+                order.setProductSubtotal(
+                        order.getProductPrice().multiply(BigDecimal.valueOf(order.getProductQuantity())));
                 order.setFreeQuantity(faker.number().numberBetween(0, 2));
                 order.setProduct(product);
                 orders.add(order);

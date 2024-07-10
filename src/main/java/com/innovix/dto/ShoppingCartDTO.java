@@ -102,4 +102,5 @@ public class ShoppingCartDTO {
      */
     @NotNull(message = "Product ID cannot be null")
     private Long productId;
+    private double icms;
 }
