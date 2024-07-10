@@ -25,6 +25,7 @@ import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -42,6 +43,8 @@ class OrderControllerTest {
     @MockBean
     private EmployeeUseCase employeeUseCase;
 
+    private PurchaseOrder mockOrder;
+
     @BeforeEach
     void setUp() {
         // Create Address instances
@@ -53,7 +56,7 @@ class OrderControllerTest {
                 new Product.Dimensions(), "sample.jpg", 19.99, null, null);
 
         // Setup mock behaviors
-        PurchaseOrder mockOrder = new PurchaseOrder();
+        mockOrder = new PurchaseOrder();
         mockOrder.setId(1L);
         mockOrder.setOrderLocalDate(LocalDate.now());
         mockOrder.setOrderStatus("NEW");
@@ -71,6 +74,10 @@ class OrderControllerTest {
         Mockito.when(employeeUseCase.listAllOrders()).thenReturn(Collections.singletonList(mockOrder));
         Mockito.when(customerUseCase.createOrder(any())).thenReturn(mockOrder);
         Mockito.when(employeeUseCase.getOrderById(anyLong())).thenReturn(mockOrder);
+        Mockito.when(employeeUseCase.listOrdersByStatus(anyString())).thenReturn(Collections.singletonList(mockOrder));
+        Mockito.when(customerUseCase.listOrdersByCustomer(any())).thenReturn(Collections.singletonList(mockOrder));
+        Mockito.when(employeeUseCase.listOrdersByLocalDateRange(any(), any())).thenReturn(Collections.singletonList(mockOrder));
+        Mockito.when(employeeUseCase.listOrdersByProductId(anyLong())).thenReturn(Collections.singletonList(mockOrder));
     }
 
     @Test
@@ -108,5 +115,43 @@ class OrderControllerTest {
     void deleteOrder() throws Exception {
         mockMvc.perform(delete("/api/orders/1"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CUSTOMER", "EMPLOYEE"})
+    void listOrdersByStatus() throws Exception {
+        mockMvc.perform(get("/api/orders/status/NEW"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].orderStatus").value("NEW"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "CUSTOMER")
+    void listOrdersByCustomer() throws Exception {
+        mockMvc.perform(get("/api/orders/customer/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].orderStatus").value("NEW"));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CUSTOMER", "EMPLOYEE"})
+    void listOrdersByLocalDateRange() throws Exception {
+        mockMvc.perform(get("/api/orders/date-range")
+                        .param("startLocalDate", "2023-01-01")
+                        .param("endLocalDate", "2023-12-31"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].orderStatus").value("NEW"));
+    }
+
+    @Test
+    @WithMockUser(authorities = {"CUSTOMER", "EMPLOYEE"})
+    void listOrdersByProductId() throws Exception {
+        mockMvc.perform(get("/api/orders/product/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].orderStatus").value("NEW"));
     }
 }

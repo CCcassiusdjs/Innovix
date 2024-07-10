@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
+/**
+ * REST controller for handling login operations.
+ */
 @RestController
 @RequestMapping("/login")
 public class LoginController {
@@ -20,6 +23,12 @@ public class LoginController {
         this.loginUseCase = loginUseCase;
     }
 
+    /**
+     * Authenticates the user and returns a JWT token.
+     *
+     * @param loginDTO The login data transfer object.
+     * @return The response entity containing the JWT token.
+     */
     @PostMapping
     public ResponseEntity<TokenDTO> doLogin(@RequestBody @Valid LoginDTO loginDTO) {
         String token = loginUseCase.login(loginDTO);

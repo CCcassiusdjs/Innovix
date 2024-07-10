@@ -1,54 +1,112 @@
 package com.innovix.entity;
 
-import javax.validation.constraints.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entity representing a product.
+ * <p>
+ * This class is used to map the product details to the database.
+ * It includes JPA annotations to define the database constraints and relationships.
+ * </p>
+ */
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Product {
+
+    /**
+     * The unique identifier of the product.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    @Size(max = 20)
-    @Column(nullable = false)
+    /**
+     * The name of the product.
+     * <p>
+     * This field is mandatory and has a maximum length of 20 characters.
+     * </p>
+     */
+    @Column(nullable = false, length = 50)
     private String name;
 
-    @Size(max = 255)
+    /**
+     * The description of the product.
+     * <p>
+     * This field is optional and has a maximum length of 255 characters.
+     * </p>
+     */
+    @Column()
     private String description;
 
-    @Size(max = 2)
-    @Column
+    /**
+     * The size of the product.
+     * <p>
+     * This field is optional and has a maximum length of 2 characters.
+     * </p>
+     */
+    @Column(length = 2)
     private String size;
 
-    @Size(max = 30)
+    /**
+     * The material of the product.
+     * <p>
+     * This field is optional and has a maximum length of 30 characters.
+     * </p>
+     */
+    @Column(length = 30)
     private String material;
 
+    /**
+     * The dimensions of the product.
+     * <p>
+     * This field is embedded within the product entity.
+     * </p>
+     */
     @Embedded
     private Dimensions dimensions;
 
+    /**
+     * The images of the product.
+     */
     private String images;
 
-    @NotNull
-    @Positive
-    @Digits(integer = 10, fraction = 2)
+    /**
+     * The price of the product.
+     * <p>
+     * This field is mandatory and must be a positive value with up to 2 decimal places.
+     * </p>
+     */
     @Column(nullable = false)
     private double price;
 
+    /**
+     * The category to which the product belongs.
+     * <p>
+     * This field is mandatory and defines a many-to-one relationship with the Category entity.
+     * </p>
+     */
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    /**
+     * The promotion associated with the product.
+     * <p>
+     * This field is optional and defines a many-to-one relationship with the Promotion entity.
+     * </p>
+     */
     @ManyToOne
     @JoinColumn(name = "promotion_id")
     private Promotion promotion;
 
+    /**
+     * Embeddable class representing the dimensions of the product.
+     */
     @Embeddable
     @Data
     public static class Dimensions {

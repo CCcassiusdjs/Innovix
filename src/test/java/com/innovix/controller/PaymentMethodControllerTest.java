@@ -2,6 +2,7 @@ package com.innovix.controller;
 
 import com.innovix.dto.PaymentMethodDTO;
 import com.innovix.entity.PaymentMethod;
+import com.innovix.mapper.PaymentMethodMapper;
 import com.innovix.usecase.CustomerUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,10 +59,10 @@ class PaymentMethodControllerTest {
     @Test
     @WithMockUser(authorities = "CUSTOMER")
     void savePaymentMethod() throws Exception {
-        PaymentMethod paymentMethod = new PaymentMethod();
-        paymentMethod.setCardNumber("1234567890123456");
+        PaymentMethodDTO paymentMethodDTO = new PaymentMethodDTO();
+        paymentMethodDTO.setCardNumber("1234567890123456");
 
-        when(customerUseCase.createPaymentMethod(any())).thenReturn(paymentMethod);
+        when(customerUseCase.createPaymentMethod(any())).thenReturn(PaymentMethodMapper.INSTANCE.toEntity(paymentMethodDTO));
 
         mockMvc.perform(post("/api/payment-methods")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -132,5 +133,4 @@ class PaymentMethodControllerTest {
         mockMvc.perform(delete("/api/payment-methods/1"))
                 .andExpect(status().isNoContent());
     }
-
 }

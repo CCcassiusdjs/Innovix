@@ -6,14 +6,32 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+/**
+ * Mapper interface for converting between Category entity and CategoryDTO.
+ * <p>
+ * This interface uses MapStruct to generate the implementation code for the mappings.
+ * </p>
+ */
 @Mapper
 public interface CategoryMapper {
 
     CategoryMapper INSTANCE = Mappers.getMapper(CategoryMapper.class);
 
-    @Mapping(source = "category.id", target = "categoryId")
+    /**
+     * Converts a Category entity to a CategoryDTO.
+     *
+     * @param category The Category entity to convert.
+     * @return The converted CategoryDTO.
+     */
+    @Mapping(source = "id", target = "categoryId")
     CategoryDTO toDto(Category category);
 
-    @Mapping(source = "categoryDTO.categoryId", target = "id")
+    /**
+     * Converts a CategoryDTO to a Category entity.
+     *
+     * @param categoryDTO The CategoryDTO to convert.
+     * @return The converted Category entity.
+     */
+    @Mapping(source = "categoryId", target = "id")
     Category toEntity(CategoryDTO categoryDTO);
 }

@@ -13,6 +13,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * REST controller for managing orders.
+ */
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
@@ -26,6 +29,11 @@ public class OrderController {
         this.employeeUseCase = employeeUseCase;
     }
 
+    /**
+     * Lists all orders.
+     *
+     * @return A list of all orders.
+     */
     @GetMapping
     @PreAuthorize("hasAnyAuthority('CUSTOMER', 'EMPLOYEE')")
     public List<OrderDTO> listAll() {
@@ -34,6 +42,12 @@ public class OrderController {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Saves a new order.
+     *
+     * @param orderDTO The order data transfer object.
+     * @return The saved order data transfer object.
+     */
     @PostMapping
     @PreAuthorize("hasAuthority('CUSTOMER')")
     public OrderDTO save(@RequestBody OrderDTO orderDTO) {
@@ -42,12 +56,24 @@ public class OrderController {
         );
     }
 
+    /**
+     * Gets an order by ID.
+     *
+     * @param id The ID of the order.
+     * @return The order data transfer object.
+     */
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('CUSTOMER', 'EMPLOYEE')")
     public OrderDTO getById(@PathVariable Long id) {
         return OrderMapper.INSTANCE.toDto(employeeUseCase.getOrderById(id));
     }
 
+    /**
+     * Lists orders by status.
+     *
+     * @param status The order status.
+     * @return A list of orders with the specified status.
+     */
     @GetMapping("/status/{status}")
     @PreAuthorize("hasAnyAuthority('CUSTOMER', 'EMPLOYEE')")
     public List<OrderDTO> listByStatus(@PathVariable String status) {
@@ -56,6 +82,12 @@ public class OrderController {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Lists orders by customer ID.
+     *
+     * @param customerId The ID of the customer.
+     * @return A list of orders associated with the specified customer.
+     */
     @GetMapping("/customer/{customerId}")
     @PreAuthorize("hasAuthority('CUSTOMER')")
     public List<OrderDTO> listByCustomer(@PathVariable Long customerId) {
@@ -64,6 +96,13 @@ public class OrderController {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Lists orders by date range.
+     *
+     * @param startLocalDate The start date of the range.
+     * @param endLocalDate   The end date of the range.
+     * @return A list of orders within the specified date range.
+     */
     @GetMapping("/date-range")
     @PreAuthorize("hasAnyAuthority('CUSTOMER', 'EMPLOYEE')")
     public List<OrderDTO> listByLocalDateRange(@RequestParam LocalDate startLocalDate, @RequestParam LocalDate endLocalDate) {
@@ -72,6 +111,12 @@ public class OrderController {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Lists orders by product ID.
+     *
+     * @param productId The ID of the product.
+     * @return A list of orders containing the specified product.
+     */
     @GetMapping("/product/{productId}")
     @PreAuthorize("hasAnyAuthority('CUSTOMER', 'EMPLOYEE')")
     public List<OrderDTO> listByProductId(@PathVariable Long productId) {
@@ -80,6 +125,11 @@ public class OrderController {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Deletes an order by ID.
+     *
+     * @param id The ID of the order to delete.
+     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('EMPLOYEE')")
     public void delete(@PathVariable Long id) {

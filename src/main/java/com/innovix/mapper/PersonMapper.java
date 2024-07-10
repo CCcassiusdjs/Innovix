@@ -3,31 +3,32 @@ package com.innovix.mapper;
 import com.innovix.dto.PersonDTO;
 import com.innovix.entity.Person;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+/**
+ * Mapper interface for converting between Person entity and PersonDTO.
+ * <p>
+ * This interface uses MapStruct to generate the implementation code for the mappings.
+ * </p>
+ */
 @Mapper
 public interface PersonMapper {
 
     PersonMapper INSTANCE = Mappers.getMapper(PersonMapper.class);
 
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "email", target = "email")
-    @Mapping(source = "fullName", target = "fullName")
-    @Mapping(source = "cpf", target = "cpf")
-    @Mapping(source = "password", target = "password")
-    @Mapping(source = "phone", target = "phone")
-    @Mapping(source = "birthday", target = "birthday")
-    @Mapping(source = "type", target = "type")
+    /**
+     * Converts a Person entity to a PersonDTO.
+     *
+     * @param person The Person entity to convert.
+     * @return The converted PersonDTO.
+     */
     PersonDTO toDto(Person person);
 
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "email", target = "email")
-    @Mapping(source = "fullName", target = "fullName")
-    @Mapping(source = "cpf", target = "cpf")
-    @Mapping(source = "password", target = "password")
-    @Mapping(source = "phone", target = "phone")
-    @Mapping(source = "birthday", target = "birthday")
-    @Mapping(source = "type", target = "type")
+    /**
+     * Converts a PersonDTO to a Person entity.
+     *
+     * @param personDTO The PersonDTO to convert.
+     * @return The converted Person entity.
+     */
     Person toEntity(PersonDTO personDTO);
 }

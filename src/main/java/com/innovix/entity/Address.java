@@ -1,54 +1,101 @@
 package com.innovix.entity;
 
-import javax.validation.constraints.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Optional;
+
+/**
+ * Entity representing an address.
+ * <p>
+ * This class is used to map the address details to the database.
+ * It includes JPA annotations to define the database constraints and relationships.
+ * </p>
+ */
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Address {
 
+    /**
+     * The unique identifier of the address.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    @Size(max = 255)
+    /**
+     * The name of the street.
+     * <p>
+     * This field is mandatory and has a maximum length of 255 characters.
+     * </p>
+     */
     @Column(nullable = false)
     private String streetName;
 
-    @NotNull
+    /**
+     * The number of the address.
+     * <p>
+     * This field is mandatory.
+     * </p>
+     */
     @Column(nullable = false)
     private int number;
 
-    @Size(max = 255)
+    /**
+     * The unit or apartment number.
+     * <p>
+     * This field is optional and has a maximum length of 255 characters.
+     * </p>
+     */
+    @Column()
     private String unit;
 
-    @NotNull
-    @Pattern(regexp = "\\d{5}-\\d{3}")
-    @Column(nullable = false)
+    /**
+     * The zip code of the address.
+     * <p>
+     * This field is mandatory and has a maximum length of 10 characters.
+     * </p>
+     */
+    @Column(nullable = false, length = 10)
     private String zipCode;
 
-    @NotNull
-    @Size(max = 255)
+    /**
+     * The city of the address.
+     * <p>
+     * This field is mandatory and has a maximum length of 255 characters.
+     * </p>
+     */
     @Column(nullable = false)
     private String city;
 
-    @NotNull
-    @Size(max = 255)
+    /**
+     * The state of the address.
+     * <p>
+     * This field is mandatory and has a maximum length of 255 characters.
+     * </p>
+     */
     @Column(nullable = false)
     private String state;
 
-    @NotNull
-    @Size(max = 255)
+    /**
+     * The country of the address.
+     * <p>
+     * This field is mandatory and has a maximum length of 255 characters.
+     * </p>
+     */
     @Column(nullable = false)
     private String country;
 
-    @NotNull
+    /**
+     * The unique identifier of the person associated with this address.
+     * <p>
+     * This field is mandatory.
+     * </p>
+     */
     @Column(nullable = false)
     private Long personId;
 }

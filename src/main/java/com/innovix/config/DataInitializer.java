@@ -5,6 +5,7 @@ import com.innovix.entity.*;
 import com.innovix.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
@@ -15,6 +16,9 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.Random;
 
+/**
+ * Data initializer class to populate the database with initial data.
+ */
 @Configuration
 public class DataInitializer {
 
@@ -29,13 +33,14 @@ public class DataInitializer {
     private final StoreRepository storeRepository;
     private final Faker faker;
     private final Random random;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public DataInitializer(AddressRepository addressRepository, CategoryRepository categoryRepository,
                            PaymentMethodRepository paymentMethodRepository, PersonRepository personRepository,
                            ProductRepository productRepository, PromotionRepository promotionRepository,
                            PurchaseOrderRepository purchaseOrderRepository, ShoppingCartRepository shoppingCartRepository,
-                           StoreRepository storeRepository) {
+                           StoreRepository storeRepository, PasswordEncoder passwordEncoder) {
         this.addressRepository = addressRepository;
         this.categoryRepository = categoryRepository;
         this.paymentMethodRepository = paymentMethodRepository;
@@ -47,6 +52,7 @@ public class DataInitializer {
         this.storeRepository = storeRepository;
         this.faker = new Faker(new Locale("pt-BR")); // Gera dados em português
         this.random = new Random();
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostConstruct
@@ -62,7 +68,7 @@ public class DataInitializer {
         createPurchaseOrders();
     }
 
-    private void createCategories() {
+    void createCategories() {
         List<Category> categories = new ArrayList<>();
         String[] categoryNames = {"Eletrônicos", "Livros", "Roupas", "Alimentos", "Móveis", "Brinquedos", "Esportes", "Saúde", "Beleza", "Automotivo"};
         for (String categoryName : categoryNames) {
@@ -76,14 +82,14 @@ public class DataInitializer {
         categoryRepository.saveAll(categories);
     }
 
-    private void createPersons() {
+    void createPersons() {
         List<Person> persons = new ArrayList<>();
         for (int i = 0; i < 100; i++) { // Creating 100 persons
             Person person = new Person();
             person.setEmail(faker.internet().emailAddress());
             person.setFullName(faker.name().fullName());
             person.setCpf(faker.regexify("\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}"));
-            person.setPassword(faker.internet().password());
+            person.setPassword(passwordEncoder.encode(faker.internet().password())); // Encrypting password
             person.setPhone(faker.phoneNumber().cellPhone());
             person.setBirthday(faker.date().birthday().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate());
             person.setType(PersonType.values()[random.nextInt(PersonType.values().length)]);
@@ -92,7 +98,7 @@ public class DataInitializer {
         personRepository.saveAll(persons);
     }
 
-    private void createAddresses() {
+    void createAddresses() {
         List<Address> addresses = new ArrayList<>();
         List<Person> persons = personRepository.findAll();
         for (Person person : persons) {
@@ -110,14 +116,20 @@ public class DataInitializer {
         addressRepository.saveAll(addresses);
     }
 
-    private void createPaymentMethods() {
+    void createPaymentMethods() {
         List<PaymentMethod> paymentMethods = new ArrayList<>();
         List<Person> persons = personRepository.findAll();
+        String[] paymentTypes = {"DEBITO", "CREDITO"};
+
         for (Person person : persons) {
             PaymentMethod paymentMethod = new PaymentMethod();
-            paymentMethod.setPaymentType(faker.finance().creditCard());
+            String paymentType = paymentTypes[random.nextInt(paymentTypes.length)];
+
+            paymentMethod.setPaymentType(paymentType);
             paymentMethod.setCardHolder(person.getFullName());
-            paymentMethod.setCardNumber(faker.finance().creditCard().replaceAll("-", ""));
+            // Gera um número de cartão com exatamente 16 dígitos
+            String cardNumber = faker.number().digits(16);
+            paymentMethod.setCardNumber(cardNumber);
             paymentMethod.setCardExpirationLocalDate(LocalDate.now().plusYears(3));
             paymentMethod.setCardCvv(faker.number().digits(3));
             paymentMethod.setPerson(person);
@@ -126,34 +138,65 @@ public class DataInitializer {
         paymentMethodRepository.saveAll(paymentMethods);
     }
 
-    private void createPromotions() {
+    void createPromotions() {
         List<Promotion> promotions = new ArrayList<>();
         List<Person> employees = personRepository.findByType(PersonType.EMPLOYEE);
-        String[] promoTypes = {
+        String[] seasons = {"Inverno", "Verão", "Primavera", "Outono"};
+        String[] descriptions = {
                 "Black Friday", "Cyber Monday", "Natal", "Ano Novo", "Carnaval", "Páscoa",
                 "Dia das Mães", "Dia dos Pais", "Dia das Crianças", "Dia dos Namorados",
                 "Férias de Verão", "Férias de Inverno", "Aniversário do Cliente"
         };
-        for (String promoType : promoTypes) {
-            Promotion promotion = new Promotion();
-            promotion.setDescription(faker.commerce().promotionCode());
-            promotion.setSeason(promoType);
-            promotion.setInitLocalDate(LocalDate.now());
-            promotion.setEndLocalDate(LocalDate.now().plusDays(30));
-            promotion.setDuration(30);
-            promotion.setPercentage(faker.number().randomDouble(2, 10, 50));
-            promotion.setRequiredQuantity(faker.number().numberBetween(1, 10));
-            promotion.setFreeQuantity(faker.number().numberBetween(1, 5));
-            promotion.setEmployee(employees.get(random.nextInt(employees.size())));
-            promotions.add(promotion);
+
+        for (Person employee : employees) {
+            for (String description : descriptions) {
+                for (String season : seasons) {
+                    Promotion promotion = new Promotion();
+                    promotion.setDescription(description);
+                    promotion.setSeason(season);
+                    promotion.setDuration(30);
+                    promotion.setEmployee(employee);
+                    promotion.setEndLocalDate(LocalDate.now().plusDays(30));
+                    promotion.setFreeQuantity(5);
+                    promotion.setInitLocalDate(LocalDate.now());
+                    promotion.setPercentage(10.0);
+                    promotion.setRequiredQuantity(2);
+                    promotions.add(promotion);
+                }
+            }
         }
         promotionRepository.saveAll(promotions);
     }
 
-    private void createProducts() {
+    void createStores() {
+        List<Store> stores = new ArrayList<>();
+        List<Address> addresses = addressRepository.findAll();
+        List<Person> employees = personRepository.findByType(PersonType.EMPLOYEE);
+
+        if (addresses.isEmpty() || employees.isEmpty()) {
+            return;
+        }
+
+        for (int i = 0; i < 20; i++) { // Creating 20 stores
+            Store store = new Store();
+            store.setStoreName(faker.company().name());
+            store.setStoreCnpj(faker.regexify("\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}"));
+            store.setAddress(addresses.get(random.nextInt(addresses.size())));
+            store.setEmployee(employees.get(random.nextInt(employees.size())));
+            stores.add(store);
+        }
+        storeRepository.saveAll(stores);
+    }
+
+    void createProducts() {
         List<Product> products = new ArrayList<>();
         List<Category> categories = categoryRepository.findAll();
         List<Promotion> promotions = promotionRepository.findAll();
+
+        if (categories.isEmpty()) {
+            return;
+        }
+
         for (int i = 0; i < 200; i++) { // Creating 200 products
             Product product = new Product();
             product.setName(faker.commerce().productName());
@@ -166,29 +209,40 @@ public class DataInitializer {
             dimensions.setHeight(faker.number().randomDouble(2, 10, 100));
             product.setDimensions(dimensions);
             product.setPrice(faker.number().randomDouble(2, 10, 1000));
-            product.setCategory(categories.get(random.nextInt(categories.size())));
+
+            Category category = categories.get(random.nextInt(categories.size()));
+            product.setCategory(category);
+
+            if (category != null && category.getName() != null) {
+                product.setImages(getImageUrlByCategory(category.getName())); // Using image URLs
+            } else {
+                product.setImages("https://example.com/images/default.jpg");
+            }
+
             product.setPromotion(promotions.isEmpty() ? null : promotions.get(random.nextInt(promotions.size())));
             products.add(product);
         }
         productRepository.saveAll(products);
     }
 
-    private void createStores() {
-        List<Store> stores = new ArrayList<>();
-        List<Address> addresses = addressRepository.findAll();
-        List<Person> employees = personRepository.findByType(PersonType.EMPLOYEE);
-        for (int i = 0; i < 20; i++) { // Creating 20 stores
-            Store store = new Store();
-            store.setStoreName(faker.company().name());
-            store.setStoreCnpj(faker.regexify("\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}"));
-            store.setAddress(addresses.get(random.nextInt(addresses.size())));
-            store.setEmployee(employees.get(random.nextInt(employees.size())));
-            stores.add(store);
-        }
-        storeRepository.saveAll(stores);
+    private String getImageUrlByCategory(String category) {
+        return switch (category) {
+            case "Eletrônicos" -> "https://example.com/images/electronics.jpg";
+            case "Livros" -> "https://example.com/images/books.jpg";
+            case "Roupas" -> "https://example.com/images/clothes.jpg";
+            case "Alimentos" -> "https://example.com/images/food.jpg";
+            case "Móveis" -> "https://example.com/images/furniture.jpg";
+            case "Brinquedos" -> "https://example.com/images/toys.jpg";
+            case "Esportes" -> "https://example.com/images/sports.jpg";
+            case "Saúde" -> "https://example.com/images/health.jpg";
+            case "Beleza" -> "https://example.com/images/beauty.jpg";
+            case "Automotivo" -> "https://example.com/images/automotive.jpg";
+            default -> "https://example.com/images/default.jpg";
+        };
     }
 
-    private void createShoppingCarts() {
+
+    void createShoppingCarts() {
         List<ShoppingCart> shoppingCarts = new ArrayList<>();
         List<Person> customers = personRepository.findByType(PersonType.CUSTOMER);
         List<Product> products = productRepository.findAll();
@@ -197,7 +251,7 @@ public class DataInitializer {
                 Product product = products.get(random.nextInt(products.size()));
                 ShoppingCart cart = new ShoppingCart();
                 cart.setCustomer(customer);
-                cart.setProductImage(faker.internet().image());
+                cart.setProductImage(product.getImages()); // Using the product image URL
                 cart.setProductName(product.getName());
                 cart.setProductDescription(product.getDescription());
                 cart.setProductPrice(product.getPrice());
@@ -211,7 +265,7 @@ public class DataInitializer {
         shoppingCartRepository.saveAll(shoppingCarts);
     }
 
-    private void createPurchaseOrders() {
+    void createPurchaseOrders() {
         List<PurchaseOrder> orders = new ArrayList<>();
         List<Person> customers = personRepository.findByType(PersonType.CUSTOMER);
         List<Address> addresses = addressRepository.findAll();
@@ -225,7 +279,7 @@ public class DataInitializer {
                 order.setCustomer(customer);
                 order.setAddressOrigin(addresses.get(random.nextInt(addresses.size())));
                 order.setAddressDestination(addresses.get(random.nextInt(addresses.size())));
-                order.setProductImage(faker.internet().image());
+                order.setProductImage(product.getImages()); // Using the product image URL
                 order.setProductName(product.getName());
                 order.setProductDescription(product.getDescription());
                 order.setProductPrice(BigDecimal.valueOf(product.getPrice()));
