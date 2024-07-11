@@ -49,7 +49,7 @@ public class Person implements UserDetails {
      * </p>
      */
     @Column(nullable = false)
-    private String fullName;
+    private String name;
 
     /**
      * The CPF (Cadastro de Pessoas Físicas) of the person.
@@ -85,7 +85,7 @@ public class Person implements UserDetails {
      * </p>
      */
     @Column(nullable = false)
-    private LocalDate birthday;
+    private LocalDate birthdate;
 
     /**
      * The type of the person (CUSTOMER or EMPLOYEE).

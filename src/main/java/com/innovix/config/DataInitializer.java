@@ -90,22 +90,22 @@ public class DataInitializer {
         for (int i = 0; i < 100; i++) { // Creating 100 persons
             Person person = new Person();
             person.setEmail(faker.internet().emailAddress());
-            person.setFullName(faker.name().fullName());
+            person.setName(faker.name().fullName());
             person.setCpf(faker.regexify("\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}"));
             person.setPassword(passwordEncoder.encode(faker.internet().password())); // Encrypting password
             person.setPhone(faker.phoneNumber().cellPhone());
-            person.setBirthday(
+            person.setBirthdate(
                     faker.date().birthday().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate());
             person.setType(PersonType.values()[random.nextInt(PersonType.values().length)]);
             persons.add(person);
         }
         Person testUser = new Person();
         testUser.setEmail("test@test.com");
-        testUser.setFullName("Test User");
+        testUser.setName("Test User");
         testUser.setCpf(faker.regexify("\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}"));
         testUser.setPassword(passwordEncoder.encode("test")); // Encrypting password
         testUser.setPhone(faker.phoneNumber().cellPhone());
-        testUser.setBirthday(faker.date().birthday().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate());
+        testUser.setBirthdate(faker.date().birthday().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate());
         testUser.setType(PersonType.EMPLOYEE);
         persons.add(testUser);
         personRepository.saveAll(persons);
@@ -139,7 +139,7 @@ public class DataInitializer {
             String paymentType = paymentTypes[random.nextInt(paymentTypes.length)];
 
             paymentMethod.setPaymentType(paymentType);
-            paymentMethod.setCardHolder(person.getFullName());
+            paymentMethod.setCardHolder(person.getName());
             // Gera um número de cartão com exatamente 16 dígitos
             String cardNumber = faker.number().digits(16);
             paymentMethod.setCardNumber(cardNumber);
