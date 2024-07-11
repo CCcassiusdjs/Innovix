@@ -43,13 +43,29 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.GET, "/api/products").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/*").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/products").hasAuthority("EMPLOYEE")
+                        .requestMatchers(HttpMethod.DELETE, "/api/products/*").hasAuthority("EMPLOYEE")
+                        .requestMatchers(HttpMethod.GET, "/api/products/name/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/products/category/**").permitAll()
+                        //.requestMatchers(HttpMethod.GET, "/api/products/price-range").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/products/size/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/products/material/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/products/promotion/*").permitAll()
                         // CEP
                         .requestMatchers(HttpMethod.GET, "/api/cep/**").permitAll()
                         // Shopping Cart
+                        .requestMatchers(HttpMethod.GET, "/api/shopping-carts").hasAuthority("CUSTOMER")
+                        // .requestMatchers(HttpMethod.POST, "/api/shopping-carts").hasAuthority("CUSTOMER")
                         .requestMatchers(HttpMethod.GET, "/api/shopping-carts/**").hasAuthority("CUSTOMER")
+                        .requestMatchers(HttpMethod.GET, "/api/shopping-carts/customer/*").hasAuthority("CUSTOMER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/shopping-carts/*").hasAuthority("CUSTOMER")
+                        // Address
+                        .requestMatchers(HttpMethod.GET, "/api/addresses").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/addresses").permitAll()
+
+                        
+
+                        //Outros
                         .requestMatchers(HttpMethod.POST, "/api/payment-methods").hasAuthority("CUSTOMER")
-                        .requestMatchers(HttpMethod.GET, "/api/addresses").hasAnyAuthority("CUSTOMER", "EMPLOYEE")
-                        .requestMatchers(HttpMethod.POST, "/api/addresses").hasAuthority("EMPLOYEE")
                         .requestMatchers(HttpMethod.GET, "/api/categories").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/categories").hasAuthority("EMPLOYEE")
                         .requestMatchers(HttpMethod.GET, "/api/orders/customer/**").hasAuthority("CUSTOMER")
@@ -61,8 +77,6 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, "/api/promotions").hasAuthority("EMPLOYEE")
                         .requestMatchers(HttpMethod.GET, "/api/stores/**").hasAnyAuthority("CUSTOMER", "EMPLOYEE")
                         .requestMatchers(HttpMethod.POST, "/api/stores/**").hasAuthority("EMPLOYEE")
-                        .requestMatchers(HttpMethod.GET, "/api/addresses").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/addresses").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

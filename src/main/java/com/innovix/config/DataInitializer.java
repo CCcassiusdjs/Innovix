@@ -5,6 +5,7 @@ import com.innovix.entity.*;
 import com.innovix.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
@@ -30,13 +31,14 @@ public class DataInitializer {
     private final IcmsRepository icmsRepository;
     private final Faker faker;
     private final Random random;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public DataInitializer(AddressRepository addressRepository, CategoryRepository categoryRepository,
             PaymentMethodRepository paymentMethodRepository, PersonRepository personRepository,
             ProductRepository productRepository, PromotionRepository promotionRepository,
             PurchaseOrderRepository purchaseOrderRepository, ShoppingCartRepository shoppingCartRepository,
-            StoreRepository storeRepository, IcmsRepository icmsRepository) {
+            StoreRepository storeRepository, IcmsRepository icmsRepository, PasswordEncoder passwordEncoder) {
         this.addressRepository = addressRepository;
         this.categoryRepository = categoryRepository;
         this.paymentMethodRepository = paymentMethodRepository;
@@ -49,6 +51,7 @@ public class DataInitializer {
         this.icmsRepository = icmsRepository;
         this.faker = new Faker(new Locale("pt-BR")); // Gera dados em português
         this.random = new Random();
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostConstruct
@@ -81,6 +84,18 @@ public class DataInitializer {
 
     private void createPersons() {
         List<Person> persons = new ArrayList<>();
+        
+        Person admin = new Person();
+        admin.setEmail("employee@innovix.com");
+        admin.setFullName("Employee Innovix");
+        admin.setCpf("000.000.000-00");
+        admin.setPassword(passwordEncoder.encode("admin"));
+        admin.setPhone("999.999.9999");
+        admin.setBirthday(
+                faker.date().birthday().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate());
+        admin.setType(PersonType.EMPLOYEE);
+        personRepository.save(admin);
+        
         for (int i = 0; i < 100; i++) { // Creating 100 persons
             Person person = new Person();
             person.setEmail(faker.internet().emailAddress());
